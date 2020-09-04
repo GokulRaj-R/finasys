@@ -2,6 +2,37 @@ pragma solidity ^0.4.17;
 
 // import loan contract
 
+contract Loan {
+    address borrower;
+    string description;
+    uint principalAmount;
+    uint currentAmount;
+    uint duration;
+    uint lastPayedOn;
+    uint extended;
+    mapping(address=>uint) lenders;
+    uint yesVotes;
+    uint noVotes;
+    mapping(address=>bool) voteBy;
+    bool isactive;
+    function addVote(address lender, bool want) public{
+        
+    }
+    
+    function callAuctionFactory() {
+        
+    }
+    function addLenders(){
+        
+    }
+    function repay(uint amt){
+        
+    }
+
+}
+
+
+
 contract AuctionFactory {
     address[] deployedAuctions;
     
