@@ -57,6 +57,7 @@ contract Loan {
         duration = t;
         isActive = true;
         noVotes = 0;
+        yesVotes = 0;
         startOn= currentTime;
         auctionFactory = auctionFactoryAddress;
     }
