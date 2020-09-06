@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 pragma solidity ^0.4.17;
 import './Auction.sol';
 
@@ -7,27 +6,6 @@ contract LoanFactory {
     
     function createLoan(string description, uint amount, uint duration, uint currentTime, address auctionFactory) public {
         address newLoan = new Loan(description, amount, duration, currentTime, msg.sender, auctionFactory);
-=======
-pragma solidity ^0.5.17;
-import "./ABDKMath64x64.sol";
-
-contract LoanFactory {
-    address[] deployedLoans;
-
-    function createLoan(
-        string description,
-        uint256 amount,
-        uint256 duration,
-        uint256 currentTime
-    ) public {
-        address newLoan = new Loan(
-            description,
-            amount,
-            duration,
-            currentTime,
-            msg.sender
-        );
->>>>>>> b453d17152165c7b97dee4871e443bdd84b9d378
         deployedLoans.push(newLoan);
     }
 
