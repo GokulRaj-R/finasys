@@ -4,11 +4,11 @@ contract User {
     address[] public loans;
     address[] public investments;
 
-    function getAllLoans() public view returns (address[]) {
+    function getAllLoans() public view returns (address[] memory) {
         return loans;
     }
 
-    function getAllInvestments() public view returns (address[]) {
+    function getAllInvestments() public view returns (address[] memory) {
         return investments;
     }
 }
