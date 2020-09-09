@@ -146,26 +146,9 @@ contract Loan {
             isActive = false;
             distributeAmount(totalAmount);
         }
-
-        // uint monthSeconds = 2629746;
-        // uint time =currentTime - startOn;
-        // int128 n = ABDKMath64x64.divu(time+monthSeconds-1, monthSeconds);
-        // uint actualPrincipal = principalAmount - currentAmount ;
-        // uint ratio = 5;
-        // uint cIAmount = ABDKMath64x64.mulu (
-        //                 pow (
-        //                 ABDKMath64x64.add (
-        //                     ABDKMath64x64.fromUInt (1),
-        //                     ABDKMath64x64.divu (
-        //                     ratio,
-        //                     10**2)),
-        //                 n),
-        //                 actualPrincipal);
-        // uint interest = cIAmount - actualPrincipal;
-        // amt = amt - interest;
     }
 
-    function getDocuments() public returns(address[]) {
+    function getDocuments() public view returns(address[]) {
         return documents;
     }
 
@@ -177,7 +160,3 @@ contract Loan {
         }
     }
 }
-
-//repay
-//summary
-//extend
