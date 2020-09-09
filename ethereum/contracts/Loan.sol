@@ -9,7 +9,8 @@ contract LoanFactory {
         uint256 amount,
         uint256 duration,
         uint256 currentTime,
-        address auctionFactory
+        address auctionFactory, 
+        address[] documentsAddresses
     ) public {
         address newLoan = new Loan(
             description,
@@ -17,7 +18,8 @@ contract LoanFactory {
             duration,
             currentTime,
             msg.sender,
-            auctionFactory
+            auctionFactory, 
+            documentsAddresses
         );
         deployedLoans.push(newLoan);
     }
@@ -37,10 +39,13 @@ contract Loan {
     uint256 public duration;
     uint256 public extended;
     mapping(address => uint256) public lenders;
+    address[] public lendersArray;
+    address[] public documents;
     uint256 public yesVotes;
     uint256 public noVotes;
     mapping(address => bool) public voteBy;
-    bool isActive;
+    bool public isActive;
+    uint public totalAmount;
 
     constructor(
         string memory title,
@@ -48,7 +53,8 @@ contract Loan {
         uint256 t,
         uint256 currentTime,
         address borrowerAddress,
-        address auctionFactoryAddress
+        address auctionFactoryAddress,
+        address[] documentsAddresses
     ) public {
         borrower = borrowerAddress;
         description = title;
@@ -59,6 +65,7 @@ contract Loan {
         yesVotes = 0;
         startOn = currentTime;
         auctionFactory = auctionFactoryAddress;
+        documents = documentsAddresses;
     }
 
     modifier isLender() {
@@ -67,6 +74,10 @@ contract Loan {
     }
     modifier isBorrower() {
         require(borrower == msg.sender);
+        _;
+    }
+    modifier isNotBorrower() {
+        require(borrower != msg.sender);
         _;
     }
 
@@ -88,8 +99,10 @@ contract Loan {
         extended = extendTime;
     }
 
-    function addLenders() public payable {
-        lenders[msg.sender] = msg.value;
+    function addLenders() public payable isNotBorrower {
+        if(lenders[msg.sender]==0)
+            lendersArray.push(msg.sender);
+        lenders[msg.sender] = lenders[msg.sender] + msg.value;
     }
 
     //borrower, description, principalAmount, currentAmount, startOn, duration, extended, yesVotes, noVotes, isActive
@@ -105,7 +118,9 @@ contract Loan {
             uint256,
             uint256,
             uint256,
-            bool
+            bool,
+            address[], 
+            address[]
         )
     {
         return (
@@ -118,13 +133,19 @@ contract Loan {
             extended,
             yesVotes,
             noVotes,
-            isActive
+            isActive, 
+            lendersArray, 
+            documents
         );
     }
 
-    function repay(uint256 remainingAmount) public payable {
+    function repay(uint256 remainingAmount) public payable isBorrower {
         currentAmount = remainingAmount;
-        if (remainingAmount == principalAmount) isActive = false;
+        totalAmount = totalAmount + msg.value;
+        if (remainingAmount == principalAmount) {
+            isActive = false;
+            distributeAmount(totalAmount);
+        }
 
         // uint monthSeconds = 2629746;
         // uint time =currentTime - startOn;
@@ -142,6 +163,18 @@ contract Loan {
         //                 actualPrincipal);
         // uint interest = cIAmount - actualPrincipal;
         // amt = amt - interest;
+    }
+
+    function getDocuments() public returns(address[]) {
+        return documents;
+    }
+
+    function distributeAmount(uint amountToDistribute) public {
+        for(uint index = 0; index < lendersArray.length; index++){
+            uint amt = amountToDistribute * lenders[lendersArray[index]];
+            amt = amt / principalAmount;
+            lendersArray[index].transfer(amt);
+        }
     }
 }
 
