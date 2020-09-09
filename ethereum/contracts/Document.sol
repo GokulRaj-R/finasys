@@ -8,7 +8,7 @@ contract DocumentFactory {
         uint256 val,
         string description
     ) public returns (address) {
-        address document = new Document(address(this), owner, val, description);
+        address document = new Document(owner, val, description);
         deployedDocuments.push(document);
         return document;
     }
@@ -27,7 +27,7 @@ contract DocumentFactory {
         return document.getSummary();
     }
 
-    function toggleDocumentLock(address documentAddress) {
+    function toggleDocumentLock(address documentAddress) public {
         Document document = Document(documentAddress);
         document.toggleLock();
     }
@@ -35,17 +35,21 @@ contract DocumentFactory {
     function changeDocumentDescription(
         address documentAddress,
         string newDescription
-    ) {
+    ) public {
         Document document = Document(documentAddress);
         document.changeDescription(newDescription);
     }
 
-    function changeDocumentValue(address documentAddress, uint256 newValue) {
+    function changeDocumentValue(address documentAddress, uint256 newValue)
+        public
+    {
         Document document = Document(documentAddress);
         document.changeValue(newValue);
     }
 
-    function changeDocumentOwner(address documentAddress, address newOwner) {
+    function changeDocumentOwner(address documentAddress, address newOwner)
+        public
+    {
         Document document = Document(documentAddress);
         document.changeOwner(newOwner);
     }
@@ -63,13 +67,12 @@ contract Document {
         _;
     }
 
-    function Document(
-        address _deployer,
+    constructor(
         address _owner,
         uint256 val,
         string desc
     ) public {
-        deployer = _deployer;
+        deployer = msg.sender;
         owner = _owner;
         value = val;
         description = desc;
