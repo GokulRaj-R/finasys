@@ -61,8 +61,8 @@ contract Loan {
             isActive = false;
         }
         else if(noVotes*2>=principalAmount){
-            extendLoan(extendTime)
-        })
+            extendLoan(extendTime);
+        }
     }
     
     function extendLoan(uint extendTime) public{
@@ -72,7 +72,7 @@ contract Loan {
         lenders[msg.sender]=msg.value;
     }
     //borrower, description, principalAmount, currentAmount, startOn, duration, extended, yesVotes, noVotes, isActive
-    function getLoanSummary public returns(address, string, uint, uint , uint, uint, uint, uint, uint, bool){
+    function getLoanSummary() public returns(address, string, uint, uint , uint, uint, uint, uint, uint, bool){
         return (
             borrower, description, principalAmount, currentAmount, startOn, duration, extended, yesVotes, noVotes, isActive
         );
