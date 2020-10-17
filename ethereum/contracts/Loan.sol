@@ -9,7 +9,7 @@ contract LoanFactory {
         uint256 amount,
         uint256 duration,
         uint256 currentTime,
-        address auctionFactory, 
+        address auctionFactory,
         address[] documentsAddresses
     ) public {
         address newLoan = new Loan(
@@ -18,7 +18,7 @@ contract LoanFactory {
             duration,
             currentTime,
             msg.sender,
-            auctionFactory, 
+            auctionFactory,
             documentsAddresses
         );
         deployedLoans.push(newLoan);
@@ -45,7 +45,7 @@ contract Loan {
     uint256 public noVotes;
     mapping(address => bool) public voteBy;
     bool public isActive;
-    uint public totalAmount;
+    uint256 public totalAmount;
 
     constructor(
         string memory title,
@@ -100,14 +100,14 @@ contract Loan {
     }
 
     function addLenders() public payable isNotBorrower {
-        if(lenders[msg.sender]==0)
-            lendersArray.push(msg.sender);
+        if (lenders[msg.sender] == 0) lendersArray.push(msg.sender);
         lenders[msg.sender] = lenders[msg.sender] + msg.value;
     }
 
     //borrower, description, principalAmount, currentAmount, startOn, duration, extended, yesVotes, noVotes, isActive
     function getLoanSummary()
         public
+        view
         returns (
             address,
             string,
@@ -119,7 +119,7 @@ contract Loan {
             uint256,
             uint256,
             bool,
-            address[], 
+            address[],
             address[]
         )
     {
@@ -133,8 +133,8 @@ contract Loan {
             extended,
             yesVotes,
             noVotes,
-            isActive, 
-            lendersArray, 
+            isActive,
+            lendersArray,
             documents
         );
     }
@@ -144,17 +144,18 @@ contract Loan {
         totalAmount = totalAmount + msg.value;
         if (remainingAmount == principalAmount) {
             isActive = false;
-            distributeAmount(totalAmount);
+            distributeAmount();
         }
     }
 
-    function getDocuments() public view returns(address[]) {
+    function getDocuments() public view returns (address[]) {
         return documents;
     }
 
-    function distributeAmount(uint amountToDistribute) public {
-        for(uint index = 0; index < lendersArray.length; index++){
-            uint amt = amountToDistribute * lenders[lendersArray[index]];
+    function distributeAmount() public {
+        uint256 sendAmount = address(this).balance;
+        for (uint256 index = 0; index < lendersArray.length; index++) {
+            uint256 amt = sendAmount * lenders[lendersArray[index]];
             amt = amt / principalAmount;
             lendersArray[index].transfer(amt);
         }

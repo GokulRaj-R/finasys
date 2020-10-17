@@ -20,7 +20,8 @@ contract DocumentFactory {
             address,
             address,
             uint256,
-            string
+            string,
+            bool
         )
     {
         Document document = Document(documentAddress);
@@ -102,9 +103,10 @@ contract Document {
             address,
             address,
             uint256,
-            string
+            string,
+            bool
         )
     {
-        return (deployer, owner, value, description);
+        return (deployer, owner, value, description, isLocked);
     }
 }
