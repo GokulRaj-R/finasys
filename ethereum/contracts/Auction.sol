@@ -1,16 +1,16 @@
 pragma solidity ^0.4.17;
 
-import "./Loan.sol";
-import "./Document.sol";
+import './Loan.sol';
+import './Document.sol';
 
 contract AuctionFactory {
     address[] deployedAuctions;
     DocumentFactory documentFactory;
-
+    
     constructor(address documentFactoryAddress) public {
         documentFactory = DocumentFactory(documentFactoryAddress);
     }
-
+    
     function createAuction(
         address newAuctionItem,
         uint256 auctionExpiryDate,
@@ -21,32 +21,28 @@ contract AuctionFactory {
             auctionExpiryDate,
             minimumBidValue
         );
-
+        
+        // Lock all documents
         Loan currentLoan = Loan(newAuctionItem);
-        address[] memory documents = currentLoan.getDocuments();
-        for (uint256 i = 0; i < documents.length; ++i) {
+        address[] memory documents =  currentLoan.getDocuments();
+        for (uint i = 0; i < documents.length; ++i) {
             documentFactory.toggleDocumentLock(documents[i]);
         }
-
+        
         deployedAuctions.push(newAuction);
     }
 
     function getDeployedAuctions() public view returns (address[]) {
         return deployedAuctions;
     }
-
-    function finalizeAuction(address currentLoanAddress, address newOwner)
-        public
-        payable
-    {
+    
+    function finalizeAuction(address currentLoanAddress, address newOwner) public {
         Loan loan = Loan(currentLoanAddress);
-        address[] memory documents = loan.getDocuments();
-
-        // Remove parameter
-        loan.distributeAmount(1000);
-
-        // unlock document and change owner
-        for (uint256 i = 0; i < documents.length; ++i) {
+        address[] memory documents =  loan.getDocuments();
+        
+        // Distribute money and unlock documents
+        loan.distributeAmount();
+        for (uint i = 0; i < documents.length; ++i) {
             documentFactory.toggleDocumentLock(documents[i]);
             documentFactory.changeDocumentOwner(documents[i], newOwner);
         }
@@ -61,7 +57,8 @@ contract Auction {
     address public loanAddress;
     address public currentBidder;
     address public auctionFactory;
-
+    AuctionFactory factory;
+    
     constructor(
         address newAuctionItem,
         uint256 auctionExpiryDate,
@@ -72,6 +69,7 @@ contract Auction {
         expiryDate = auctionExpiryDate;
         loanAddress = newAuctionItem;
         auctionFactory = msg.sender;
+        factory = AuctionFactory(auctionFactory);
     }
 
     function bid(uint256 date) public payable {
@@ -109,9 +107,12 @@ contract Auction {
     }
 
     function endAuction() public {
-        loanAddress.transfer(address(this).balance);
-        AuctionFactory factory = AuctionFactory(auctionFactory);
         factory.finalizeAuction(loanAddress, currentBidder);
+        loanAddress.transfer(address(this).balance);
         isActive = false;
+    }
+    
+    function balance() public view returns (uint) {
+        return address(this).balance;
     }
 }

@@ -87,6 +87,8 @@ contract Loan {
         _;
     }
 
+    function() external payable {}
+
     function addVote(bool want, uint256 extendTime) public isLender {
         voteBy[msg.sender] = want;
         if (want) yesVotes += lenders[msg.sender];
