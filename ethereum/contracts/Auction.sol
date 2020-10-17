@@ -1,16 +1,16 @@
 pragma solidity ^0.4.17;
 
-import './Loan.sol';
-import './Document.sol';
+import "./Loan.sol";
+import "./Document.sol";
 
 contract AuctionFactory {
     address[] deployedAuctions;
     DocumentFactory documentFactory;
-    
+
     constructor(address documentFactoryAddress) public {
         documentFactory = DocumentFactory(documentFactoryAddress);
     }
-    
+
     function createAuction(
         address newAuctionItem,
         uint256 auctionExpiryDate,
@@ -21,29 +21,32 @@ contract AuctionFactory {
             auctionExpiryDate,
             minimumBidValue
         );
-        
+
         Loan currentLoan = Loan(newAuctionItem);
-        address[] memory documents =  currentLoan.getDocuments();
-        for (uint i = 0; i < documents.length; ++i) {
+        address[] memory documents = currentLoan.getDocuments();
+        for (uint256 i = 0; i < documents.length; ++i) {
             documentFactory.toggleDocumentLock(documents[i]);
         }
-        
+
         deployedAuctions.push(newAuction);
     }
 
     function getDeployedAuctions() public view returns (address[]) {
         return deployedAuctions;
     }
-    
-    function finalizeAuction(address currentLoanAddress, address newOwner) public payable {
+
+    function finalizeAuction(address currentLoanAddress, address newOwner)
+        public
+        payable
+    {
         Loan loan = Loan(currentLoanAddress);
-        address[] memory documents =  loan.getDocuments();
-        
+        address[] memory documents = loan.getDocuments();
+
         // Remove parameter
         loan.distributeAmount(1000);
-        
+
         // unlock document and change owner
-        for (uint i = 0; i < documents.length; ++i) {
+        for (uint256 i = 0; i < documents.length; ++i) {
             documentFactory.toggleDocumentLock(documents[i]);
             documentFactory.changeDocumentOwner(documents[i], newOwner);
         }
@@ -58,7 +61,7 @@ contract Auction {
     address public loanAddress;
     address public currentBidder;
     address public auctionFactory;
-    
+
     constructor(
         address newAuctionItem,
         uint256 auctionExpiryDate,
