@@ -9,7 +9,8 @@ contract LoanFactory {
         uint256 amount,
         uint256 duration,
         uint256 currentTime,
-        address auctionFactory, 
+        address auctionFactory,
+        bool typeOfLoan,
         address[] documentsAddresses
     ) public {
         address newLoan = new Loan(
@@ -18,7 +19,8 @@ contract LoanFactory {
             duration,
             currentTime,
             msg.sender,
-            auctionFactory, 
+            auctionFactory,
+            typeOfLoan,
             documentsAddresses
         );
         deployedLoans.push(newLoan);
@@ -34,7 +36,7 @@ contract Loan {
     address public auctionFactory;
     string public description;
     uint256 public principalAmount;
-    uint256 public currentAmount;
+    uint256 public currentAmount; 
     uint256 public startOn;
     uint256 public duration;
     uint256 public extended;
@@ -45,7 +47,8 @@ contract Loan {
     uint256 public noVotes;
     mapping(address => bool) public voteBy;
     bool public isActive;
-    uint public totalAmount;
+    bool loanType;
+    uint256 public totalAmount;
 
     constructor(
         string memory title,
@@ -54,6 +57,7 @@ contract Loan {
         uint256 currentTime,
         address borrowerAddress,
         address auctionFactoryAddress,
+        bool typeOfLoan,
         address[] documentsAddresses
     ) public {
         borrower = borrowerAddress;
@@ -63,8 +67,10 @@ contract Loan {
         isActive = true;
         noVotes = 0;
         yesVotes = 0;
+        partialPayment = 0;
         startOn = currentTime;
         auctionFactory = auctionFactoryAddress;
+        loanType = typeOfLoan;                  // loanType=0, loan starts immediately 
         documents = documentsAddresses;
     }
 
@@ -100,14 +106,22 @@ contract Loan {
     }
 
     function addLenders() public payable isNotBorrower {
-        if(lenders[msg.sender]==0)
-            lendersArray.push(msg.sender);
+        if (lenders[msg.sender] == 0) lendersArray.push(msg.sender);
         lenders[msg.sender] = lenders[msg.sender] + msg.value;
+        currentAmount + = msg.value;
+        if(!loanType){
+            borrower.transfer(msg.value);
+        }
+        else if(currentAmount == principalAmount){
+            uint256 totalBalance = address(this).balance;
+            borrower.transfer(totalBalance);
+        }
     }
 
     //borrower, description, principalAmount, currentAmount, startOn, duration, extended, yesVotes, noVotes, isActive
     function getLoanSummary()
         public
+        view
         returns (
             address,
             string,
@@ -119,7 +133,7 @@ contract Loan {
             uint256,
             uint256,
             bool,
-            address[], 
+            address[],
             address[]
         )
     {
@@ -133,28 +147,30 @@ contract Loan {
             extended,
             yesVotes,
             noVotes,
-            isActive, 
-            lendersArray, 
+            isActive,
+            lendersArray,
             documents
         );
     }
 
+    // remainingAmount should be calculated at frontend and it is equal to the amoung the user have to pay.
     function repay(uint256 remainingAmount) public payable isBorrower {
         currentAmount = remainingAmount;
         totalAmount = totalAmount + msg.value;
-        if (remainingAmount == principalAmount) {
+        if (remainingAmount == 0) {
             isActive = false;
-            distributeAmount(totalAmount);
+            distributeAmount();
         }
     }
 
-    function getDocuments() public view returns(address[]) {
+    function getDocuments() public view returns (address[]) {
         return documents;
     }
 
-    function distributeAmount(uint amountToDistribute) public {
-        for(uint index = 0; index < lendersArray.length; index++){
-            uint amt = amountToDistribute * lenders[lendersArray[index]];
+    function distributeAmount() public {
+        uint256 sendAmount = address(this).balance;
+        for (uint256 index = 0; index < lendersArray.length; index++) {
+            uint256 amt = sendAmount * lenders[lendersArray[index]];
             amt = amt / principalAmount;
             lendersArray[index].transfer(amt);
         }
