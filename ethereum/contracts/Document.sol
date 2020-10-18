@@ -20,6 +20,15 @@ contract DocumentFactory {
         return document;
     }
 
+    function checkDocumentValidity(address documentAddress, address owner)
+        public
+        view
+        returns (bool)
+    {
+        Document document = Document(documentAddress);
+        return document.owner == owner;
+    }
+
     function getDocumentSummary(address documentAddress)
         public
         view
