@@ -1,13 +1,20 @@
 pragma solidity ^0.4.17;
+import "./User.sol";
 
 contract DocumentFactory {
     address[] public deployedDocuments;
+    UserFactory userFactory;
+
+    constructor(address userFactoryAddress) public {
+        userFactory = UserFactory(userFactoryAddress);
+    }
 
     function createDocument(
         address owner,
         uint256 val,
         string description
     ) public returns (address) {
+        require(userFactory.checkValidity(owner) == true, "Owner not verified");
         address document = new Document(owner, val, description);
         deployedDocuments.push(document);
         return document;
