@@ -67,7 +67,6 @@ contract Loan {
         isActive = true;
         noVotes = 0;
         yesVotes = 0;
-        partialPayment = 0;
         startOn = currentTime;
         auctionFactory = auctionFactoryAddress;
         loanType = typeOfLoan;                  // loanType=0, loan starts immediately 
@@ -110,7 +109,7 @@ contract Loan {
     function addLenders() public payable isNotBorrower {
         if (lenders[msg.sender] == 0) lendersArray.push(msg.sender);
         lenders[msg.sender] = lenders[msg.sender] + msg.value;
-        currentAmount + = msg.value;
+        currentAmount  = currentAmount + msg.value;
         if(!loanType){
             borrower.transfer(msg.value);
         }
