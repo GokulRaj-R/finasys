@@ -26,7 +26,7 @@ contract DocumentFactory {
         returns (bool)
     {
         Document document = Document(documentAddress);
-        return document.owner == owner;
+        return document.owner() == owner;
     }
 
     function getDocumentSummary(address documentAddress)
@@ -73,11 +73,11 @@ contract DocumentFactory {
 }
 
 contract Document {
-    address deployer;
-    address owner;
-    uint256 value;
-    string description;
-    bool isLocked;
+    address public deployer;
+    address public owner;
+    uint256 public value;
+    string public description;
+    bool public isLocked;
 
     modifier restricted() {
         require(deployer == msg.sender);
