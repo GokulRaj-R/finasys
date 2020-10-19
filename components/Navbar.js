@@ -56,7 +56,7 @@ function Navbar () {
             <Toolbar>
                 <div className={styles.logo_container}>
                     <img className={styles.logo} src={logoImage} />
-                    <span > Finosys</span>
+                    <span > Finasys</span>
                 </div>
                 <div className={styles.dropdown}> 
                     <Typography variant="h6"> Loan </Typography>
