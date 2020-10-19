@@ -1,16 +1,32 @@
 pragma solidity ^0.4.17;
+import "./User.sol";
 
 contract DocumentFactory {
     address[] public deployedDocuments;
+    UserFactory userFactory;
+
+    constructor(address userFactoryAddress) public {
+        userFactory = UserFactory(userFactoryAddress);
+    }
 
     function createDocument(
         address owner,
         uint256 val,
         string description
     ) public returns (address) {
+        require(userFactory.checkValidity(owner) == true, "Owner not verified");
         address document = new Document(owner, val, description);
         deployedDocuments.push(document);
         return document;
+    }
+
+    function checkDocumentValidity(address documentAddress, address owner)
+        public
+        view
+        returns (bool)
+    {
+        Document document = Document(documentAddress);
+        return document.owner() == owner;
     }
 
     function getDocumentSummary(address documentAddress)
@@ -57,11 +73,11 @@ contract DocumentFactory {
 }
 
 contract Document {
-    address deployer;
-    address owner;
-    uint256 value;
-    string description;
-    bool isLocked;
+    address public deployer;
+    address public owner;
+    uint256 public value;
+    string public description;
+    bool public isLocked;
 
     modifier restricted() {
         require(deployer == msg.sender);
