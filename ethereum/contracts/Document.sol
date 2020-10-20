@@ -9,11 +9,11 @@ contract DocumentFactory {
         userFactory = UserFactory(userFactoryAddress);
     }
 
-    function createDocument(
-        address owner,
-        uint256 val,
-        string description
-    ) public returns (address) {
+    function createDocument(uint256 val, string description)
+        public
+        returns (address)
+    {
+        address owner = msg.sender;
         require(userFactory.checkValidity(owner) == true, "Owner not verified");
         address document = new Document(owner, val, description);
         deployedDocuments.push(document);
