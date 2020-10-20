@@ -13,7 +13,6 @@ contract LoanFactory {
         uint256 amount,
         uint256 duration,
         uint256 currentTime,
-        address auctionFactory,
         bool typeOfLoan,
         address[] documentsAddresses
     ) public {
@@ -23,7 +22,7 @@ contract LoanFactory {
             duration,
             currentTime,
             msg.sender,
-            auctionFactory,
+            auctionFactoryAddress,
             typeOfLoan,
             documentsAddresses
         );

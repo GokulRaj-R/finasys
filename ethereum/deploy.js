@@ -17,30 +17,30 @@ const deploy = async() =>{
     const accounts = await web3.eth.getAccounts();
 
     console.log('Attempting to deploy from accounts', accounts[0]);
-
-    const userResult = await new web3.eth.Contract(JSON.parse(UserFactory.interface))
-        .deploy({ data: UserFactory.bytecode})
-        .send({ gas: '1000000', from : accounts[0]});
+    const gasLimit = 3000000;
+    // const userResult = await new web3.eth.Contract(JSON.parse(UserFactory.interface))
+    //     .deploy({ data: UserFactory.bytecode})
+    //     .send({ gas: gasLimit, from : accounts[0]});
     
-    console.log('User Factory Contract deployed to', userResult.options.address);
+    // console.log('User Factory Contract deployed to', userResult.options.address);
 
-    const documentResult = await new web3.eth.Contract(JSON.parse(DocumentFactory.interface))
-        .deploy({ data: DocumentFactory.bytecode, argument: [userResult.options.address]})
-        .send({ gas: '1000000', from : accounts[0]});
+    // const documentResult = await new web3.eth.Contract(JSON.parse(DocumentFactory.interface))
+    //     .deploy({ data: DocumentFactory.bytecode, arguments: [userResult.options.address]})
+    //     .send({ gas: gasLimit, from : accounts[0]});
     
-    console.log('Document Factory Contract deployed to', documentResult.options.address);
+    // console.log('Document Factory Contract deployed to', documentResult.options.address);
 
     // const auctionResult = await new web3.eth.Contract(JSON.parse(AuctionFactory.interface))
-    //     .deploy({ data: AuctionFactory.bytecode, argument: [documentResult.options.address]})
-    //     .send({ gas: '1000000', from : accounts[0]});
+    //     .deploy({ data: AuctionFactory.bytecode, arguments: [documentResult.options.address]})
+    //     .send({ gas: gasLimit, from : accounts[0]});
     
     // console.log('Auction Factory Contract deployed to', auctionResult.options.address);
 
-    // const loanResult = await new web3.eth.Contract(JSON.parse(LoanFactory.interface))
-    //     .deploy({ data: UserFactory.bytecode, argument: [auctionResult.options.address]})
-    //     .send({ gas: '1000000', from : accounts[0]});
+    const loanResult = await new web3.eth.Contract(JSON.parse(LoanFactory.interface))
+        .deploy({ data: UserFactory.bytecode, arguments: ["0x02FA671Ab121f5F3A97cE72B737EB53d37F92763"]})
+        .send({ gas: gasLimit, from : accounts[0]});
     
-    // console.log('Loan Factory Contract deployed to', loanResult.options.address);
+    console.log('Loan Factory Contract deployed to', loanResult.options.address);
 
 }
 
