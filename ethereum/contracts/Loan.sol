@@ -3,7 +3,11 @@ import "./Auction.sol";
 
 contract LoanFactory {
     address[] deployedLoans;
-
+    address auctionFactoryAddress;
+    
+    constructor(address auctionFactory) public {
+        auctionFactoryAddress = auctionFactory;
+    }
     function createLoan(
         string description,
         uint256 amount,
@@ -33,7 +37,6 @@ contract LoanFactory {
 
 contract Loan {
     address public borrower;
-    address public auctionFactory;
     string public description;
     uint256 public principalAmount;
     uint256 public currentAmount; 
@@ -49,6 +52,7 @@ contract Loan {
     bool public isActive;
     bool loanType;
     uint256 public totalAmount;
+    AuctionFactory auctionFactory;
 
     constructor(
         string memory title,
@@ -68,9 +72,10 @@ contract Loan {
         noVotes = 0;
         yesVotes = 0;
         startOn = currentTime;
-        auctionFactory = auctionFactoryAddress;
         loanType = typeOfLoan;                  // loanType=0, loan starts immediately 
         documents = documentsAddresses;
+        auctionFactory = AuctionFactory(auctionFactoryAddress);
+
     }
 
     modifier isLender() {
@@ -94,8 +99,8 @@ contract Loan {
         else noVotes += lenders[msg.sender];
 
         if (yesVotes * 2 > principalAmount) {
-            AuctionFactory auction = AuctionFactory(auctionFactory);
-            auction.createAuction(address(this), 10000, 100);
+         
+            auctionFactory.createAuction(address(this), 10000, 100);
             isActive = false;
         } else if (noVotes * 2 >= principalAmount) {
             extendLoan(extendTime);

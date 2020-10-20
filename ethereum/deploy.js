@@ -1,6 +1,9 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
-const compiledFactory = require('./build/CampaignFactory.json');
+const DocumentFactory = require('./build/Document.solDocumentFactory.json');
+const UserFactory = require('./build/User.solUserFactory.json');
+const AuctionFactory = require('./build/Auction.solAuctionFactory.json');
+const LoanFactory = require('./build/Loan.solLoanFactory.json');
 
 
 const provider = new HDWalletProvider(
@@ -15,11 +18,30 @@ const deploy = async() =>{
 
     console.log('Attempting to deploy from accounts', accounts[0]);
 
-    const result = await new web3.eth.Contract(JSON.parse(compiledFactory.interface))
-        .deploy({ data: compiledFactory.bytecode, arguments: ['Hi there!']})
+    const userResult = await new web3.eth.Contract(JSON.parse(UserFactory.interface))
+        .deploy({ data: UserFactory.bytecode})
         .send({ gas: '1000000', from : accounts[0]});
     
-    console.log('Contract deployed to', result.options.address);
+    console.log('User Factory Contract deployed to', userResult.options.address);
+
+    const documentResult = await new web3.eth.Contract(JSON.parse(DocumentFactory.interface))
+        .deploy({ data: DocumentFactory.bytecode, argument: [userResult.options.address]})
+        .send({ gas: '1000000', from : accounts[0]});
+    
+    console.log('Document Factory Contract deployed to', documentResult.options.address);
+
+    // const auctionResult = await new web3.eth.Contract(JSON.parse(AuctionFactory.interface))
+    //     .deploy({ data: AuctionFactory.bytecode, argument: [documentResult.options.address]})
+    //     .send({ gas: '1000000', from : accounts[0]});
+    
+    // console.log('Auction Factory Contract deployed to', auctionResult.options.address);
+
+    // const loanResult = await new web3.eth.Contract(JSON.parse(LoanFactory.interface))
+    //     .deploy({ data: UserFactory.bytecode, argument: [auctionResult.options.address]})
+    //     .send({ gas: '1000000', from : accounts[0]});
+    
+    // console.log('Loan Factory Contract deployed to', loanResult.options.address);
+
 }
 
 deploy();
