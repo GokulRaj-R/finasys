@@ -109,8 +109,8 @@ contract Auction {
     }
 
     function endAuction() public {
-        factory.finalizeAuction(loanAddress, currentBidder);
         loanAddress.transfer(address(this).balance);
+        factory.finalizeAuction(loanAddress, currentBidder);
         isActive = false;
     }
 

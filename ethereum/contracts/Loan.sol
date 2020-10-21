@@ -3,13 +3,17 @@ import "./Auction.sol";
 
 contract LoanFactory {
     address[] deployedLoans;
+    address auctionFactoryAddress;
+
+    constructor(address auctionFactory) public {
+        auctionFactoryAddress = auctionFactory;
+    }
 
     function createLoan(
         string description,
         uint256 amount,
         uint256 duration,
         uint256 currentTime,
-        address auctionFactory,
         bool typeOfLoan,
         address[] documentsAddresses
     ) public {
@@ -19,7 +23,7 @@ contract LoanFactory {
             duration,
             currentTime,
             msg.sender,
-            auctionFactory,
+            auctionFactoryAddress,
             typeOfLoan,
             documentsAddresses
         );
@@ -33,10 +37,9 @@ contract LoanFactory {
 
 contract Loan {
     address public borrower;
-    address public auctionFactory;
     string public description;
     uint256 public principalAmount;
-    uint256 public currentAmount; 
+    uint256 public currentAmount;
     uint256 public startOn;
     uint256 public duration;
     uint256 public extended;
@@ -49,6 +52,7 @@ contract Loan {
     bool public isActive;
     bool loanType;
     uint256 public totalAmount;
+    AuctionFactory auctionFactory;
 
     constructor(
         string memory title,
@@ -68,9 +72,9 @@ contract Loan {
         noVotes = 0;
         yesVotes = 0;
         startOn = currentTime;
-        auctionFactory = auctionFactoryAddress;
-        loanType = typeOfLoan;                  // loanType=0, loan starts immediately 
+        loanType = typeOfLoan; // loanType=0, loan starts immediately
         documents = documentsAddresses;
+        auctionFactory = AuctionFactory(auctionFactoryAddress);
     }
 
     modifier isLender() {
@@ -94,8 +98,7 @@ contract Loan {
         else noVotes += lenders[msg.sender];
 
         if (yesVotes * 2 > principalAmount) {
-            AuctionFactory auction = AuctionFactory(auctionFactory);
-            auction.createAuction(address(this), 10000, 100);
+            auctionFactory.createAuction(address(this), 10000, 100);
             isActive = false;
         } else if (noVotes * 2 >= principalAmount) {
             extendLoan(extendTime);
@@ -109,11 +112,10 @@ contract Loan {
     function addLenders() public payable isNotBorrower {
         if (lenders[msg.sender] == 0) lendersArray.push(msg.sender);
         lenders[msg.sender] = lenders[msg.sender] + msg.value;
-        currentAmount  = currentAmount + msg.value;
-        if(!loanType){
+        currentAmount = currentAmount + msg.value;
+        if (!loanType) {
             borrower.transfer(msg.value);
-        }
-        else if(currentAmount == principalAmount){
+        } else if (currentAmount == principalAmount) {
             uint256 totalBalance = address(this).balance;
             borrower.transfer(totalBalance);
         }
