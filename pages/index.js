@@ -31,6 +31,7 @@ const useStyles = makeStyles(() => ({
     backgroundRepeat: "no-repeat",
   },
 }));
+
 const App = () => {
   const styles = useStyles();
   return (

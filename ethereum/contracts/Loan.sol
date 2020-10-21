@@ -4,10 +4,11 @@ import "./Auction.sol";
 contract LoanFactory {
     address[] deployedLoans;
     address auctionFactoryAddress;
-    
+
     constructor(address auctionFactory) public {
         auctionFactoryAddress = auctionFactory;
     }
+
     function createLoan(
         string description,
         uint256 amount,
@@ -38,7 +39,7 @@ contract Loan {
     address public borrower;
     string public description;
     uint256 public principalAmount;
-    uint256 public currentAmount; 
+    uint256 public currentAmount;
     uint256 public startOn;
     uint256 public duration;
     uint256 public extended;
@@ -71,10 +72,9 @@ contract Loan {
         noVotes = 0;
         yesVotes = 0;
         startOn = currentTime;
-        loanType = typeOfLoan;                  // loanType=0, loan starts immediately 
+        loanType = typeOfLoan; // loanType=0, loan starts immediately
         documents = documentsAddresses;
         auctionFactory = AuctionFactory(auctionFactoryAddress);
-
     }
 
     modifier isLender() {
@@ -98,7 +98,6 @@ contract Loan {
         else noVotes += lenders[msg.sender];
 
         if (yesVotes * 2 > principalAmount) {
-         
             auctionFactory.createAuction(address(this), 10000, 100);
             isActive = false;
         } else if (noVotes * 2 >= principalAmount) {
@@ -113,11 +112,10 @@ contract Loan {
     function addLenders() public payable isNotBorrower {
         if (lenders[msg.sender] == 0) lendersArray.push(msg.sender);
         lenders[msg.sender] = lenders[msg.sender] + msg.value;
-        currentAmount  = currentAmount + msg.value;
-        if(!loanType){
+        currentAmount = currentAmount + msg.value;
+        if (!loanType) {
             borrower.transfer(msg.value);
-        }
-        else if(currentAmount == principalAmount){
+        } else if (currentAmount == principalAmount) {
             uint256 totalBalance = address(this).balance;
             borrower.transfer(totalBalance);
         }

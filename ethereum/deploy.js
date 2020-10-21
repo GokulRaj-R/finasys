@@ -5,16 +5,17 @@ const UserFactory = require('./build/User.solUserFactory.json');
 const AuctionFactory = require('./build/Auction.solAuctionFactory.json');
 const LoanFactory = require('./build/Loan.solLoanFactory.json');
 
-
 const provider = new HDWalletProvider(
-   'spider luxury dolphin thunder law injury annual media negative light shaft steel', 
-   'https://rinkeby.infura.io/v3/b35f31da16654d00a2cdbfa2bacbe71a',
+  'spider luxury dolphin thunder law injury annual media negative light shaft steel',
+  'https://rinkeby.infura.io/v3/b35f31da16654d00a2cdbfa2bacbe71a'
 );
 
 const web3 = new Web3(provider);
 
-const deploy = async() =>{
-    const accounts = await web3.eth.getAccounts();
+const deploy = async () => {
+  const accounts = await web3.eth.getAccounts();
+
+  console.log('Attempting to deploy from accounts', accounts[0]);
 
     console.log('Attempting to deploy from accounts', accounts[0]);
     const gasLimit = 3000000;
