@@ -1,6 +1,6 @@
 import React from 'react'
 import Box from '@material-ui/core/Box';
-import Grid from './Dashboard/Grid'
+import Grid from '../components/Dashboard/Grid';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({

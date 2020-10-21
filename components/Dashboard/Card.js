@@ -13,7 +13,6 @@ const useStyles = makeStyles({
   },
 });
 
-// 
 const Cardd = ({img, topic, text}) => {
   const classes = useStyles();
 
