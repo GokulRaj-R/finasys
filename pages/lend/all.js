@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
-import loanFactory from "../../ethereum/instances/loanFactory";
+import CardList from "../../components/CardList";
+import Loan from "../../ethereum/instances/loan";
+import LoanFactory from "../../ethereum/instances/loanFactory";
 
 const loanIndex = ({ loans }) => {
   // const renderLoan = () => {
@@ -20,17 +22,28 @@ const loanIndex = ({ loans }) => {
   console.log(loans);
   return (
     <Layout>
-      <div>
-        <h3>Open Loans</h3>
-        {/* {renderLoan()} */}
-      </div>
+      <h1>Active loans</h1>
+      <CardList />
+      {/* {renderLoan()} */}
     </Layout>
   );
 };
 
 export async function getStaticProps() {
-  const lFactory = loanFactory();
-  const loans = await lFactory.methods.getDeployedLoans().call();
+  const loanFactory = LoanFactory();
+  const loanAddresses = await loanFactory.methods.getDeployedLoans().call();
+
+  const loans = await Promise.all(
+    loanAddresses.map(async (loanAddress) => {
+      const loan = Loan(loanAddress);
+      const summary = await loan.methods.getLoanSummary().call();
+      console.log(summary);
+      return {
+        borrower: summary[0],
+        description: summary[1],
+      };
+    })
+  );
   return { props: { loans } };
 }
 
