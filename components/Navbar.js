@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-evenly",
     flexGrow: 1,
     "& h6": {
-      fontWeight: "600",
+      fontWeight: "400",
       cursor: "pointer",
       // position:"relative",
       // display: "inline-block",

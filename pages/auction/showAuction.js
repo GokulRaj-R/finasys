@@ -1,12 +1,12 @@
 import React from "react";
 import Layout from "../../components/Layout";
 
-const showLoan = () => {
+const auctionLoan = () => {
   return (
     <Layout>
-      <div>Single Loan Page</div>
+      <div>Single Auction Page</div>
     </Layout>
   );
 };
 
-export default showLoan;
+export default auctionLoan;

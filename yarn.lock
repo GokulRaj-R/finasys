@@ -7205,6 +7205,11 @@ swarm-js@^0.1.40:
     tar "^4.0.2"
     xhr-request "^1.0.1"
 
+sweetalert2@^10.7.0:
+  version "10.7.0"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-10.7.0.tgz#73c82b7988175fede29358d3cc28bc83bbd8cda9"
+  integrity sha512-L/RwuY6JKs38nxnIjLnnNLnZ0+m2Bod+fXgNS2ewLI+9xzNJwUcPGv/Sh3wn2bmNNjcfuHTS7qZKwa7AIeDvNg==
+
 tapable@^1.0.0, tapable@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-1.1.3.tgz#a1fccc06b58db61fd7a45da2da44f5f3a3e67ba2"
