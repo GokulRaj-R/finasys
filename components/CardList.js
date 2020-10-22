@@ -10,8 +10,19 @@ const useStyles = makeStyles({
   },
 });
 
-export default function App() {
+export default function App({ cards }) {
   const classes = useStyles();
+  const renderLoans = () => {
+    const items = cards.map((card, id) => {
+      return (
+        <Grid key={id} item xs={12} sm={6} md={4}>
+          <Card card={card} />
+        </Grid>
+      );
+    });
+    return items;
+  };
+
   return (
     <Grid
       container
@@ -19,21 +30,7 @@ export default function App() {
       className={classes.gridContainer}
       justify="center"
     >
-      <Grid item xs={12} sm={6} md={4}>
-        <Card />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-        <Card />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-        <Card />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-        <Card />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-        <Card />
-      </Grid>
+      {renderLoans()}
     </Grid>
   );
 }

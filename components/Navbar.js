@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core";
 import React from "react";
 import logoImage from "../assets/icons/logo.png";
+import { Link } from "../routes";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -15,6 +16,7 @@ const useStyles = makeStyles(() => ({
     },
     display: "flex",
     alignItems: "center",
+    textDecoration: "none",
   },
   logo: {
     height: "3em",
@@ -53,15 +55,25 @@ function Navbar() {
   return (
     <AppBar position="static" color="transparent">
       <Toolbar>
-        <div className={styles.logo_container}>
-          <img className={styles.logo} src={logoImage} />
-          <span> Finasys</span>
-        </div>
+        <Link route="/">
+          <a className={styles.logo_container}>
+            <img className={styles.logo} src={logoImage} />
+            <span> Finasys</span>
+          </a>
+        </Link>
         <div className={styles.dropdown}>
-          <Typography variant="h6"> Loan </Typography>
-          <Typography variant="h6"> Lend</Typography>
-          <Typography variant="h6"> KYC</Typography>
-          <Typography variant="h6"> Auction</Typography>
+          <Link route="/dashboard">
+            <Typography variant="h6"> Dashboard</Typography>
+          </Link>
+          <Link route="/">
+            <Typography variant="h6"> Loan </Typography>
+          </Link>
+          <Link route="/lend/all">
+            <Typography variant="h6"> Lend</Typography>
+          </Link>
+          <Link route="/auction/all">
+            <Typography variant="h6"> Auction</Typography>
+          </Link>
         </div>
       </Toolbar>
     </AppBar>
