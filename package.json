@@ -20,6 +20,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "solc": "0.4.25",
+    "sweetalert2": "^10.7.0",
     "truffle": "^5.1.49",
     "truffle-hdwallet-provider": "^1.0.17",
     "web3": "^1.2.11"

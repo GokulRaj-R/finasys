@@ -8,6 +8,19 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "../routes";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
+  },
+});
 
 const useStyles = makeStyles({
   root: {
@@ -43,7 +56,7 @@ export default function ImgMediaCard({ card }) {
           component="img"
           alt="Loan Details"
           height="140"
-          image={`https://picsum.photos/200/300?random=${Math.random()}`}
+          image={`https://picsum.photos/200/300?random=${card.description}`}
           title="Loan Description"
         />
         <CardContent>
@@ -85,6 +98,18 @@ export default function ImgMediaCard({ card }) {
             Learn More
           </Button>
         </Link>
+        <Button
+          size="small"
+          onClick={() => {
+            Toast.fire({
+              icon: "success",
+              title: "Copied to clipboard",
+            });
+            navigator.clipboard.writeText(card.address);
+          }}
+        >
+          copy address
+        </Button>
         {card.type != -1 ? (
           <Typography
             className={classes.type}
