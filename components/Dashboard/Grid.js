@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Card from './Card'
+import Card from './Card';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,13 +19,15 @@ export default function SpacingGrid() {
   let cards = [];
 
   for (let i = 0; i < 8; i++) {
-    cards.push(<Grid key={i} item>
-      <Card 
-        img = "https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png" 
-        topic = "Topic" 
-        text = "This is just some random text to fill in the space and show my awesomeness."
-      />
-    </Grid>);
+    cards.push(
+      <Grid key={i} item>
+        <Card
+          img="https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png"
+          topic="Topic"
+          text="This is just some random text to fill in the space and show my awesomeness."
+        />
+      </Grid>
+    );
   }
 
   return (
