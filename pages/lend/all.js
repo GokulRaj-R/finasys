@@ -4,10 +4,11 @@ import Layout from "../../components/Layout";
 import CardList from "../../components/CardList";
 import Loan from "../../ethereum/instances/loan";
 import LoanFactory from "../../ethereum/instances/loanFactory";
-import { Router } from "../../routes";
+import { useRouter } from "next/router";
 import loanBG from "../../assets/images/loanBG.jpg";
 
 const loanIndex = () => {
+  const router = useRouter();
   const [loans, setLoans] = useState([]);
   const [findAddress, setFindAddress] = useState("");
   const getLoans = async () => {
@@ -31,6 +32,7 @@ const loanIndex = () => {
   };
 
   useEffect(() => {
+    document.title = "Loans - Finasys";
     getLoans();
   }, []);
 
@@ -40,7 +42,7 @@ const loanIndex = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    Router.pushRoute(`/lend/${findAddress}`);
+    router.push(`/lend/${findAddress}`);
   };
 
   const headStyle = {
