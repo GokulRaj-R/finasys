@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@svgr/webpack": "^5.4.0",
     "fs-extra": "^9.0.1",
     "ganache-cli": "^6.10.1",
@@ -19,6 +20,7 @@
     "next-images": "^1.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-hook-form": "^6.9.5",
     "solc": "0.4.25",
     "sweetalert2": "^10.7.0",
     "truffle": "^5.1.49",
