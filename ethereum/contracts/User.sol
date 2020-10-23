@@ -1,17 +1,15 @@
 pragma solidity ^0.4.17;
 
 contract UserFactory {
-    address[] public deployedUsers;
-    mapping(address => uint256) aadharToUser;
-    mapping(uint256 => address[]) userToAadhar;
+    mapping(uint256 => string) public name;
+    mapping(address => uint256) public aadharToUser;
+    mapping(uint256 => address[]) public userToAadhar;
+    mapping(uint256 => address[]) public investments;
+    mapping(uint256 => address[]) public loans;
 
-    function createUser() public returns (address) {
-        address user = new User();
-        deployedUsers.push(user);
-        return user;
-    }
-
-    function validateUser(address user, uint256 aadhar) public {
+    function validateUser(uint256 aadhar, string memory userName) public {
+        address user = msg.sender;
+        name[aadhar] = userName;
         aadharToUser[user] = aadhar;
         userToAadhar[aadhar].push(user);
     }
@@ -21,18 +19,15 @@ contract UserFactory {
     }
 
     function addUserLoan(address currUser, address loan) public {
-        User user = User(currUser);
-        user.addLoan(loan);
+      loans[aadharToUser[currUser]].push(loan);
     }
 
     function addUserInvestment(address currUser, address investment) public {
-        User user = User(currUser);
-        user.addInvestment(investment);
+      investments[aadharToUser[currUser]].push(investment);
     }
 
     function getUserLoans(address currUser) public view returns (address[]) {
-        User user = User(currUser);
-        return user.getAllLoans();
+        return loans[aadharToUser[currUser]];
     }
 
     function getUserInvestments(address currUser)
@@ -40,28 +35,15 @@ contract UserFactory {
         view
         returns (address[])
     {
-        User user = User(currUser);
-        return user.getAllInvestments();
+        return investments[aadharToUser[currUser]];
+    }
+
+    function getUserSummary(address currUser) public view returns (string memory, address[], address[]) {
+      return (
+        name[aadharToUser[currUser]],
+        loans[aadharToUser[currUser]],
+        investments[aadharToUser[currUser]]
+       );
     }
 }
 
-contract User {
-    address[] public loans;
-    address[] public investments;
-
-    function addLoan(address loan) public {
-        loans.push(loan);
-    }
-
-    function addInvestment(address investment) public {
-        investments.push(investment);
-    }
-
-    function getAllLoans() public view returns (address[] memory) {
-        return loans;
-    }
-
-    function getAllInvestments() public view returns (address[] memory) {
-        return investments;
-    }
-}

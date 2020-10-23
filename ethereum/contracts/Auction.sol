@@ -4,7 +4,7 @@ import "./Loan.sol";
 import "./Document.sol";
 
 contract AuctionFactory {
-    address[] deployedAuctions;
+    address[] public deployedAuctions;
     DocumentFactory documentFactory;
 
     constructor(address documentFactoryAddress) public {
@@ -118,3 +118,4 @@ contract Auction {
         return address(this).balance;
     }
 }
+

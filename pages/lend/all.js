@@ -19,7 +19,6 @@ const loanIndex = () => {
       loanAddresses.map(async (loanAddress) => {
         const loan = Loan(loanAddress);
         const summary = await loan.methods.getLoanSummary().call();
-        console.log(summary);
         return {
           address: loanAddress,
           borrower: summary[0],

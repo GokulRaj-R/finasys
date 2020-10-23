@@ -1,15 +1,19 @@
 pragma solidity ^0.4.17;
 import "./Auction.sol";
+import "./User.sol";
 
 contract LoanFactory {
-    address[] deployedLoans;
-    address auctionFactoryAddress;
+    address[] public deployedLoans;
+    address public auctionFactoryAddress;
+    address public userFactoryAddress;
 
-    constructor(address auctionFactory) public {
+    constructor(address auctionFactory, address userFactory) public {
         auctionFactoryAddress = auctionFactory;
+        userFactoryAddress = userFactory;
     }
 
     function createLoan(
+        string title,
         string description,
         uint256 amount,
         uint256 duration,
@@ -18,12 +22,14 @@ contract LoanFactory {
         address[] documentsAddresses
     ) public {
         address newLoan = new Loan(
+            title,
             description,
             amount,
             duration,
             currentTime,
             msg.sender,
             auctionFactoryAddress,
+            userFactoryAddress,
             typeOfLoan,
             documentsAddresses
         );
@@ -37,6 +43,7 @@ contract LoanFactory {
 
 contract Loan {
     address public borrower;
+    string public title;
     string public description;
     uint256 public principalAmount;
     uint256 public currentAmount;
@@ -50,22 +57,26 @@ contract Loan {
     uint256 public noVotes;
     mapping(address => bool) public voteBy;
     bool public isActive;
-    bool loanType;
+    bool public loanType;
     uint256 public totalAmount;
     AuctionFactory auctionFactory;
+    UserFactory userFactory;
 
     constructor(
-        string memory title,
+        string memory loanTitle,
+        string memory descrip,
         uint256 amount,
         uint256 t,
         uint256 currentTime,
         address borrowerAddress,
         address auctionFactoryAddress,
+        address userFactoryAddress,
         bool typeOfLoan,
         address[] documentsAddresses
     ) public {
         borrower = borrowerAddress;
-        description = title;
+        title = loanTitle;
+        description = descrip;
         principalAmount = amount;
         duration = t;
         isActive = true;
@@ -75,6 +86,8 @@ contract Loan {
         loanType = typeOfLoan; // loanType=0, loan starts immediately
         documents = documentsAddresses;
         auctionFactory = AuctionFactory(auctionFactoryAddress);
+        userFactory = UserFactory(userFactoryAddress);
+        userFactory.addUserLoan(borrower, address(this));
     }
 
     modifier isLender() {
@@ -113,6 +126,8 @@ contract Loan {
         if (lenders[msg.sender] == 0) lendersArray.push(msg.sender);
         lenders[msg.sender] = lenders[msg.sender] + msg.value;
         currentAmount = currentAmount + msg.value;
+        userFactory.addUserInvestment(msg.sender, address(this));
+
         if (!loanType) {
             borrower.transfer(msg.value);
         } else if (currentAmount == principalAmount) {
@@ -121,12 +136,13 @@ contract Loan {
         }
     }
 
-    //borrower, description, principalAmount, currentAmount, startOn, duration, extended, yesVotes, noVotes, isActive
+    //borrower, title, description, principalAmount, currentAmount, startOn, duration, yesVotes, noVotes, isActive, documents
     function getLoanSummary()
         public
         view
         returns (
             address,
+            string,
             string,
             uint256,
             uint256,
@@ -134,24 +150,21 @@ contract Loan {
             uint256,
             uint256,
             uint256,
-            uint256,
             bool,
-            address[],
             address[]
         )
     {
         return (
             borrower,
+            title,
             description,
             principalAmount,
             currentAmount,
             startOn,
             duration,
-            extended,
             yesVotes,
             noVotes,
             isActive,
-            lendersArray,
             documents
         );
     }
@@ -179,3 +192,4 @@ contract Loan {
         }
     }
 }
+
