@@ -3,7 +3,11 @@ import React from "react";
 import Layout from "../../components/Layout";
 import {StarIcon} from '@material-ui/core/Icon';
 import Swal from "sweetalert2";
-import { ReactComponenets as CopyIcon } from '../../assets/icons/copy.svg';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import SendIcon from '@material-ui/icons/Send';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -47,13 +51,31 @@ const useStyles = makeStyles({
     sub_heading: {
       fontSize: "1em",
       fontWeight: "600",
+      textAlign: "center",
     }, 
     description: {
       textAlign: "justify",
     }, 
     document_name: {
       fontSize: "0.8em",
-      margin: "0.25em"
+      margin: "0.25em",
+      display: "flex",
+      alignItems: "center",
+      textTransform: "ellipses",
+    }, 
+    copy_icon: {
+      width: "0.7em", 
+      height: "0.7em",
+      marginLeft: "5px",
+      cursor: "pointer"
+    }, 
+    form: {
+      display: "flex",
+      justifyContent: "center",
+    },
+    vote_button_wrapper: {
+      display: 'flex',
+      justifyContent: 'center',
     }
   })
 
@@ -104,7 +126,7 @@ const showLoan = () => {
             </div>
           </Paper>
         </Grid>
-        <Grid item xs={8} >
+        <Grid item xs={7} >
           <Paper style={{padding: "1em 2em"}}>
           <p className={styles.title}> My First Loan</p>
           <p className={styles.description}>
@@ -120,30 +142,26 @@ const showLoan = () => {
           </p>
           
             <p className={styles.sub_heading}>Lend Money</p>
-            <form>
+            <form className={styles.form}>
 
-              <Grid xs={6} container justify="space-between">
-                    <Grid  item xs={3}>
-                      <TextField type="Number" variant="outlined" />
+              <Grid xs={6} container justify="space-between" >
+                    <Grid  item xs={6} justify="center">
+                      <TextField type="Number"  justify="center"   inputProps={{min: 0, style: { textAlign: 'center' }}}/>
                     </Grid>
-                    <Grid item xs={3} justify="center">
-                      <Button variant="contained" color="primary">Lend</Button>
+                    <Grid item xs={6} justify="center" align="center" style={{display: 'flex'}}>
+                      <Button variant="contained" color="primary" endIcon={<SendIcon />}>Lend</Button>
                     </Grid>
-                  {/* <Grid item xs={6} justify="center">
-                    <Button variant="contained"  disabled>Vote </Button>
-                  </Grid> */}
               </Grid>
             </form>
-            <p>Vote For</p>
-            <Grid container xs={6}>
-                <Grid item><Button variant="contained" color="primary" >Yes</Button> </Grid>
-                <Grid item><Button variant="contained" color="primary" >No</Button> </Grid>
-              
+            <p className={styles.sub_heading}>Agree To Extend the Loan?</p>
+            <Grid container xs={12} justify="center" >
+  <Grid item xs={2} className={styles.vote_button_wrapper}><Button variant="contained" color="primary"  startIcon={<CheckCircleIcon />}>Yes</Button> </Grid>
+  <Grid item xs={2} className={styles.vote_button_wrapper}justify="center"><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid>
             </Grid>
             </Paper>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           
           <Paper style={{padding:"1em", margin:"0 2em"}}>
               <p className={styles.header}>Borrower</p>
@@ -164,7 +182,7 @@ const showLoan = () => {
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}>Mortgage</p>
-              <p className={styles.document_name}> My Building</p>
+              <p className={styles.document_name}> My Building Building Building  <FileCopyIcon className={styles.copy_icon}/></p>
 
               <div className={styles.document}>
               <Typography>My Building</Typography>
