@@ -20,10 +20,11 @@ const loanIndex = () => {
         const loan = Loan(loanAddress);
         const summary = await loan.methods.getLoanSummary().call();
         return {
+          title: summary[1],
           address: loanAddress,
           borrower: summary[0],
-          description: summary[1],
-          type: 0,
+          description: summary[2],
+          type: Math.random() > 0.5 ? 1 : 0,
         };
       })
     );

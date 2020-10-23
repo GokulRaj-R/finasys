@@ -67,7 +67,7 @@ export default function ImgMediaCard({ card }) {
             component="h2"
             noWrap
           >
-            {card.address}
+            {card.title}
           </Typography>
           <Typography
             className={classes.subtitleLeft}
@@ -85,7 +85,12 @@ export default function ImgMediaCard({ card }) {
           >
             {card.address}
           </Typography>
-          <Typography className={classes.body} variant="body2" component="p">
+          <Typography
+            style={{ paddingTop: "10px", textAlign: "left" }}
+            className={classes.body}
+            variant="body2"
+            component="p"
+          >
             {card.description}
           </Typography>
         </CardContent>

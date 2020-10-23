@@ -145,7 +145,7 @@ const showLoan = () => {
             <form className={styles.form}>
 
               <Grid xs={6} container justify="space-between" >
-                    <Grid  item xs={6} justify="center">
+                    <Grid  item xs={6} >
                       <TextField type="Number"  justify="center"   inputProps={{min: 0, style: { textAlign: 'center' }}}/>
                     </Grid>
                     <Grid item xs={6} justify="center" align="center" style={{display: 'flex'}}>

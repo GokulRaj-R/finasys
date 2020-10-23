@@ -3,6 +3,7 @@ import { TextField, Grid, Button } from "@material-ui/core";
 import Layout from "../../components/Layout";
 import CardList from "../../components/CardList";
 import Auction from "../../ethereum/instances/auction";
+import Loan from "../../ethereum/instances/loan";
 import AuctionFactory from "../../ethereum/instances/auctionFactory";
 import { useRouter } from "next/router";
 import auctionBG from "../../assets/images/auctionBG.jpeg";
@@ -21,11 +22,14 @@ const auctionIndex = () => {
     const allAuctions = await Promise.all(
       auctionAddresses.map(async (auctionAddress) => {
         const auction = Auction(auctionAddress);
-        const summary = await auction.methods.auctionSummary().call();
+        const loanAddress = await auction.methods.loanAddress().call();
+        const loan = Loan(loanAddress);
+        const summary = await loan.methods.getLoanSummary().call();
         return {
           address: auctionAddress,
+          title: summary[1],
           borrower: summary[0],
-          description: summary[1],
+          description: summary[2],
           type: -1,
         };
       })
