@@ -19,7 +19,7 @@ const input = fileNames.reduce(
 );
 source = input.sources;
 const output = solc.compile(input, 1).contracts;
-console.log(output);
+// console.log(output);
 fs.ensureDirSync(buildPath);
 for (let contract in output) {
   fs.outputJsonSync(
