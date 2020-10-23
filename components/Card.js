@@ -7,7 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Link } from "../routes";
+import Link from "next/link";
 import Swal from "sweetalert2";
 
 const Toast = Swal.mixin({
@@ -54,9 +54,9 @@ export default function ImgMediaCard({ card }) {
       <CardActionArea>
         <CardMedia
           component="img"
-          alt="Loan Details"
+          alt="Details"
           height="140"
-          image={`https://picsum.photos/200/300?random=${card.description}`}
+          image={`https://picsum.photos/500/600?random=${card.description}`}
           title="Loan Description"
         />
         <CardContent>
@@ -91,9 +91,7 @@ export default function ImgMediaCard({ card }) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Link
-          route={`/${card.type == -1 ? "auction" : "lend"}/${card.address}`}
-        >
+        <Link href={`/${card.type == -1 ? "auction" : "lend"}/${card.address}`}>
           <Button size="small" color="primary">
             Learn More
           </Button>
