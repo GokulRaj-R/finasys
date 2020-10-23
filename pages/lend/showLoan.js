@@ -104,7 +104,7 @@ const showLoan = () => {
             </div>
           </Paper>
         </Grid>
-        <Grid item xs={5} >
+        <Grid item xs={8} >
           <Paper style={{padding: "1em 2em"}}>
           <p className={styles.title}> My First Loan</p>
           <p className={styles.description}>
