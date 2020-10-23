@@ -18,10 +18,10 @@ const input = fileNames.reduce(
   { sources: {} }
 );
 source = input.sources;
-const output = solc.compile(input, 1);
-// console.log(output);
+const output = solc.compile(input, 1).contracts;
+console.log(output);
 fs.ensureDirSync(buildPath);
-for (let contract in output.contracts) {
+for (let contract in output) {
   fs.outputJsonSync(
     path.resolve(buildPath, contract.replace(':', '') + '.json'),
     output[contract]
