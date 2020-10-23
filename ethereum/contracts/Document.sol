@@ -126,3 +126,4 @@ contract Document {
         return (deployer, owner, value, description, isLocked);
     }
 }
+
