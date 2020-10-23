@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core';
 import logoImage from '../../assets/icons/logo.png';
@@ -10,6 +10,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+
+import Newloan from '../../components/newLoan';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,7 +68,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NewLoan = () => {
-  const [Value, setValue] = React.useState('');
+  const [Value, setValue] = useState('');
+  const [selectedTab, setSelectedTab] = useState(0);
   const styles = useStyles();
 
   const handleChange = (event) => {
@@ -84,130 +90,31 @@ const NewLoan = () => {
           <img className={styles.logo} src={logoImage} />
           <span> Finasys </span>
         </div>
-        <p style={{ paddingBottom: '5px' }}>Apply for a new loan</p>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={styles.root}>
-            <Grid container spacing={2}>
-              <Grid
-                container
-                justify="center"
-                spacing={2}
-                style={{ margin: '1px' }}
-              >
-                <Grid item name="title">
-                  <TextField
-                    id="filled-basic"
-                    label="Title"
-                    name="title"
-                    className={styles.textField}
-                    variant="filled"
-                    inputRef={register({ required: true })}
-                    color="secondary"
-                  />
-                </Grid>
-                <Grid item>
-                  <TextField
-                    id="outlined-basic"
-                    label="Current Time"
-                    className={styles.textField}
-                    type="number"
-                    variant="filled"
-                    inputRef={register({ required: true })}
-                    name="time"
-                    color="secondary"
-                  />
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                justify="center"
-                spacing={2}
-                style={{ margin: '1px' }}
-              >
-                <Grid item>
-                  <TextField
-                    id="filled-basic"
-                    label="Amount"
-                    className={styles.textField}
-                    type="number"
-                    variant="filled"
-                    inputRef={register({ required: true })}
-                    name="amount"
-                    color="secondary"
-                  />
-                </Grid>
-                <Grid item>
-                  <TextField
-                    id="filled-basic"
-                    label="Duration"
-                    type="number"
-                    className={styles.textField}
-                    variant="filled"
-                    inputRef={register({ required: true })}
-                    name="duration"
-                    color="secondary"
-                  />
-                </Grid>
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  id="filled-basic"
-                  label="Description"
-                  type="text"
-                  style={{ width: '49em' }}
-                  variant="filled"
-                  inputRef={register({ required: true })}
-                  name="description"
-                  color="secondary"
-                />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  id="filled-basic"
-                  label="Add documents' addresses separated by comma"
-                  type="text"
-                  style={{ width: '49em' }}
-                  variant="filled"
-                  inputRef={register({ required: true })}
-                  name="documents"
-                  color="secondary"
-                />
-              </Grid>
-            </Grid>
-          </div>
-          <section>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Type of loan</FormLabel>
-              <Controller
-                as={
-                  <RadioGroup
-                    aria-label="type"
-                    row
-                    style={{ margin: '2px' }}
-                    value={''}
-                    onChange={handleChange}
-                  >
-                    <FormControlLabel
-                      value="running"
-                      control={<Radio />}
-                      label="Running"
-                    />
-                    <FormControlLabel
-                      value="fixed"
-                      control={<Radio />}
-                      label="Fixed"
-                    />
-                  </RadioGroup>
-                }
-                name="Type"
-                control={control}
-              />
-            </FormControl>
-          </section>
-          <Button variant="contained" type="submit" color="secondary">
-            Submit
-          </Button>
-        </form>
+        <AppBar
+          position="static"
+          color="transparent"
+          style={{ margin: 'auto', width: '49em' }}
+        >
+          <Tabs
+            value={selectedTab}
+            // style={{ width: '60em' }}
+            onChange={(e, val) => setSelectedTab(val)}
+            indicatorColor="secondary"
+            textColor="primary"
+            variant="fullWidth"
+            centered
+            aria-label="full width tabs example"
+          >
+            <Tab label="New Loan" />
+            <Tab label="New Document" />
+          </Tabs>
+        </AppBar>
+        {selectedTab == 0 && <Newloan />}
+        {selectedTab == 1 && (
+          <Fragment>
+            <h1>New Document</h1>
+          </Fragment>
+        )}
       </div>
     </div>
   );

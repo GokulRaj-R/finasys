@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import CardList from '../../components/CardList';
 import Auction from '../../ethereum/instances/auction';
 import AuctionFactory from '../../ethereum/instances/auctionFactory';
-import { Router } from '../../routes';
+import { useRouter } from 'next/router';
 import auctionBG from '../../assets/images/auctionBG.jpeg';
 
 const auctionIndex = () => {
@@ -72,7 +72,6 @@ const auctionIndex = () => {
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           marginBottom: '50px',
-          overflow: 'hidden',
         }}
         container
         alignItems="center"
