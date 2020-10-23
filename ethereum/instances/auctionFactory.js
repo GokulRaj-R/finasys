@@ -4,7 +4,7 @@ import auctionFactorySOL from "../build/Auction.solAuctionFactory.json";
 const auctionFactory = () => {
   return new web3.eth.Contract(
     JSON.parse(auctionFactorySOL.interface),
-    "0xe2fd5d9779c53dAf2ccac6629f3F8BCAda91387B"
+    "0x2a795006760192317dc8416520a4EF90211AFc63"
   );
 };
 
