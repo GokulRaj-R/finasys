@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Layout from '../components/Layout';
 import Grid from '../components/Dashboard/Grid';
 import { makeStyles } from '@material-ui/core';
@@ -40,6 +40,10 @@ const useStyles = makeStyles(() => ({
 
 const Dashboard = () => {
   const styles = useStyles();
+
+  useEffect(() => {
+    document.title = "Dashboard - Finasys";
+  });
 
   return (
     <Layout>
