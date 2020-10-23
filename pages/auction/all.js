@@ -4,10 +4,11 @@ import Layout from "../../components/Layout";
 import CardList from "../../components/CardList";
 import Auction from "../../ethereum/instances/auction";
 import AuctionFactory from "../../ethereum/instances/auctionFactory";
-import { Router } from "../../routes";
+import { useRouter } from "next/router";
 import auctionBG from "../../assets/images/auctionBG.jpeg";
 
 const auctionIndex = () => {
+  const router = useRouter();
   const [auctions, setAuctions] = useState([]);
   const [findAddress, setFindAddress] = useState("");
 
@@ -33,6 +34,7 @@ const auctionIndex = () => {
   };
 
   useEffect(() => {
+    document.title = "Auctions - Finasys";
     getAuctions();
   }, []);
 
@@ -42,7 +44,7 @@ const auctionIndex = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    Router.pushRoute(`/lend/${findAddress}`);
+    router.push(`/auction/${findAddress}`);
   };
 
   const headStyle = {
