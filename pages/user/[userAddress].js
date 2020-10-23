@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import UserFactory from "../../ethereum/instances/userFactory";
 import Loan from "../../ethereum/instances/Loan";
-import { Grid } from "@material-ui/core";
+import { Grid, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CardList from "../../components/CardList";
 import { useRouter } from "next/router";
+import web3 from "../../ethereum/web3";
 
 const useStyles = makeStyles({
   base: {
@@ -34,19 +35,32 @@ const subheadStyle = {
 };
 
 const showUser = () => {
+  const [isValid, setIsValid] = useState(true);
   const [investments, setInvestments] = useState([]);
   const [loans, setLoans] = useState([]);
   const [name, setName] = useState("");
   const [tabIndex, setTabIndex] = useState(0);
+  const [newName, setNewName] = useState("");
+  const [id, setId] = useState();
 
   const classes = useStyles();
   const router = useRouter();
 
   const getUserSummary = async (userAddress) => {
     const userFactory = UserFactory();
-    const summary = await userFactory.methods
-      .getUserSummary(userAddress)
-      .call();
+    let summary;
+    try {
+      const validUser = await userFactory.methods
+        .checkValidity(router.query.userAddress)
+        .call();
+      if (!validUser) throw "invalid";
+      summary = await userFactory.methods.getUserSummary(userAddress).call();
+    } catch (err) {
+      console.log(err);
+      setIsValid(false);
+      setTabIndex(2);
+      return;
+    }
 
     setName(summary[0]);
     const loanAddresses = summary[1];
@@ -94,6 +108,28 @@ const showUser = () => {
     setTabIndex(newValue);
   };
 
+  const onNameChange = (event) => {
+    setNewName(event.target.value);
+  };
+
+  const onAadharChange = (event) => {
+    setId(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const userFactory = UserFactory();
+    const accounts = await web3.eth.getAccounts();
+
+    await userFactory.methods
+      .validateUser(parseInt(id, 10), newName)
+      .send({ from: accounts[0] });
+
+    await getUserSummary(router.query.userAddress);
+    setTabIndex(0);
+    setIsValid(true);
+  };
+
   return (
     <Layout>
       <Grid container justify="center">
@@ -102,8 +138,9 @@ const showUser = () => {
         </Grid>
         <Grid item xs={12}>
           <p style={subheadStyle}>
-            Thanks for connecting, you can access your personal loans and
-            investments here.
+            {isValid
+              ? "Thanks for connecting, you can access your personal loans and investments here."
+              : "Please verify yourself to continue using the service."}
           </p>
         </Grid>
         <Grid
@@ -121,8 +158,9 @@ const showUser = () => {
             onChange={handleChange}
             aria-label="disabled tabs example"
           >
-            <Tab label="Loans" />
-            <Tab label="Investments" />
+            <Tab disabled={!isValid} label="Loans" />
+            <Tab disabled={!isValid} label="Investments" />
+            <Tab disabled={isValid} label="Verify Yourself" />
           </Tabs>
           <Grid
             style={{ paddingTop: "50px" }}
@@ -130,7 +168,53 @@ const showUser = () => {
             item
             xs={12}
           >
-            <CardList cards={tabIndex ? investments : loans} />
+            {isValid ? (
+              <CardList cards={tabIndex ? investments : loans} />
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <Grid container justify="center">
+                  <Grid
+                    style={{
+                      marginLeft: "20%",
+                      marginRight: "20%",
+                      marginBottom: "50px",
+                    }}
+                    xs={12}
+                    item
+                  >
+                    <TextField
+                      fullWidth
+                      onChange={onNameChange}
+                      id="filled-basic"
+                      label="Name"
+                      variant="filled"
+                    />
+                  </Grid>
+                  <Grid
+                    style={{
+                      marginLeft: "20%",
+                      marginRight: "20%",
+                      marginBottom: "50px",
+                    }}
+                    xs={12}
+                    item
+                  >
+                    <TextField
+                      fullWidth
+                      onChange={onAadharChange}
+                      id="filled-basic"
+                      label="Aadhar Id"
+                      variant="filled"
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Button type="submit" variant="outlined" color="primary">
+                      Submit
+                    </Button>
+                  </Grid>
+                </Grid>
+              </form>
+            )}
           </Grid>
         </Grid>
       </Grid>
