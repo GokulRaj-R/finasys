@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
-import AuctionFactory from "../../ethereum/instances/auctionFactory";
-import Auction from "../../ethereum/instances/auction";
-import LoanFactory from "../../ethereum/instances/LoanFactory";
+import User from "../../ethereum/instances/user";
 import Loan from "../../ethereum/instances/Loan";
 import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,41 +16,39 @@ const useStyles = makeStyles({
 });
 
 const showUser = () => {
-  const [auctions, setAuctions] = useState([]);
+  const [investments, setInvestments] = useState([]);
   const [loans, setLoans] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
   const classes = useStyles();
+  const router = useRouter();
 
-  const getAuctions = async () => {
-    const auctionFactory = AuctionFactory();
-    const auctionAddresses = await auctionFactory.methods
-      .getDeployedAuctions()
-      .call();
+  const getInvestments = async (userAddress) => {
+    const user = User(userAddress);
+    const investmentAddresses = await user.methods.getAllInvestments().call();
 
-    const allAuctions = await Promise.all(
-      auctionAddresses.map(async (auctionAddress) => {
-        const auction = Auction(auctionAddress);
-        const summary = await auction.methods.auctionSummary().call();
+    const allInvestments = await Promise.all(
+      investmentAddresses.map(async (investmentAddress) => {
+        const loan = Loan(investmentAddress);
+        const summary = await loan.methods.getLoanSummary().call();
         return {
-          address: auctionAddress,
+          address: investmentAddress,
           borrower: summary[0],
           description: summary[1],
           type: -1,
         };
       })
     );
-    setAuctions(allAuctions);
+    setInvestments(allInvestments);
   };
 
-  const getLoans = async () => {
-    const loanFactory = LoanFactory();
-    const loanAddresses = await loanFactory.methods.getDeployedLoans().call();
+  const getLoans = async (userAddress) => {
+    const user = User(userAddress);
+    const loanAddresses = await user.methods.getAllLoans().call();
 
     const allLoans = await Promise.all(
       loanAddresses.map(async (loanAddress) => {
         const loan = Loan(loanAddress);
         const summary = await loan.methods.getLoanSummary().call();
-        console.log(summary);
         return {
           address: loanAddress,
           borrower: summary[0],
@@ -66,17 +62,16 @@ const showUser = () => {
 
   useEffect(() => {
     window.title = "User - Finasys";
-    getAuctions();
-    getLoans();
-  }, []);
+    if (router.query.userAddress) {
+      // getInvestments(router.query.userAddress);
+      // getLoans(router.query.userAddress);
+    }
+  }, [router.query.userAddress]);
 
   const handleChange = (event, newValue) => {
     setTabIndex(newValue);
-    console.log(tabIndex);
   };
 
-  const router = useRouter();
-  console.log("address", router.query);
   return (
     <Layout>
       <Grid container justify="center">
@@ -107,8 +102,7 @@ const showUser = () => {
             item
             xs={12}
           >
-            auctions/loans
-            <CardList cards={tabIndex ? auctions : loans} />
+            {/* <CardList cards={tabIndex ? investments : loans} /> */}
           </Grid>
         </Grid>
       </Grid>
