@@ -1,5 +1,5 @@
-import { Button, CardActions, Grid, makeStyles, Paper, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, withStyles } from "@material-ui/core";
-import React from "react";
+import { Button, CardActions, Grid, InputAdornment, makeStyles, Paper, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, withStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import {StarIcon} from '@material-ui/core/Icon';
 import Swal from "sweetalert2";
@@ -8,6 +8,8 @@ import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import SendIcon from '@material-ui/icons/Send';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
+import { useRouter } from "next/router";
+import Loan from "../../ethereum/instances/loan";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -21,6 +23,14 @@ const Toast = Swal.mixin({
   },
 });
 
+  const copyHelper = (text) => {
+      Toast.fire({
+        icon: "success",
+        title: "Copied to clipboard",
+      });
+      navigator.clipboard.writeText(text);
+  }
+
 const useStyles = makeStyles({
     root:{
       margin: '2em',
@@ -29,11 +39,12 @@ const useStyles = makeStyles({
       fontColor: "#fff",
       margin: "0",
       fontWeight: "700",
-      fontSize: "0.9em"
+      fontSize: "0.9em",
+      marginRight: "0.5em"
     },
     details:{
       margin: "0",
-      fontSize: "0.8em", 
+      fontSize: "0.9em", 
     }, 
     horizontal_line: {
       margin: "0.05em",
@@ -59,14 +70,14 @@ const useStyles = makeStyles({
     document_name: {
       fontSize: "0.8em",
       margin: "0.25em",
-      display: "flex",
-      alignItems: "center",
-      textTransform: "ellipses",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
     }, 
     copy_icon: {
       width: "0.7em", 
       height: "0.7em",
-      marginLeft: "5px",
+      // marginLeft: "5px",
       cursor: "pointer"
     }, 
     form: {
@@ -76,33 +87,38 @@ const useStyles = makeStyles({
     vote_button_wrapper: {
       display: 'flex',
       justifyContent: 'center',
+    },
+    document_wrappup: {
+      display: "flex",
+      // justifyContent: "space-between",
+      alignItems: "center",
+    },
+    document_price: {
+      width: "8em",
+      textAlign: "right",
+      fontSize: "0.8em",
+      color: "green",
+      marginLeft: "auto",
+      // justifySelf: "flex-end"
     }
   })
 
-const showLoan = () => {
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories };
-  }
-  
-  const rows = [
-    createData('Principal Amount', 159, 6.0, 24, 4.0),
-    createData('Interest Rate', 237, 9.0, 37, 4.3),
-    createData('Remaining Amount', 262, 16.0, 24, 6.0),
-    createData('Requested On', 305, 3.7, 67, 4.3),
-    createData('Duration', 356, 16.0, 49, 3.9),
-  ];
+const showLoan = ({loanAddress, loanDetails}) => {
+  // console.log(props.loanAddress, props, props.loanDetails);
   const styles = useStyles();
+  console.log(loanAddress, loanDetails);
   return (
     <Layout>
       <Grid container 
       style={{padding: "1.5em 0em"}}
       >
+      
 
-<Grid item xs={2}>
+<Grid item xs={3}>
           <Paper style={{padding:"1em", margin:"0 2em"}}>
             <div className={styles.row}> 
               <p className={styles.header}>Principal Amount</p>
-              <p className={styles.details}> 100000</p>
+              <p className={styles.details}> {loanDetails[3]} wei</p>
             </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
@@ -126,37 +142,32 @@ const showLoan = () => {
             </div>
           </Paper>
         </Grid>
-        <Grid item xs={7} >
+        <Grid item xs={6} >
           <Paper style={{padding: "1em 2em"}}>
-          <p className={styles.title}> My First Loan</p>
+          <p className={styles.title}> {loanDetails[1]}</p>
           <p className={styles.description}>
-            
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-            when an unknown printer took a galley of type and scrambled it to make a type 
-            specimen book. It has survived not only five centuries, but also the leap into 
-            electronic typesetting, remaining essentially unchanged. It was popularised in
-            the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
-            and more recently with desktop publishing software like Aldus PageMaker including 
-            versions of Lorem Ipsum.
+            {loanDetails[2]}
           </p>
           
             <p className={styles.sub_heading}>Lend Money</p>
             <form className={styles.form}>
-
-              <Grid xs={6} container justify="space-between" >
-                    <Grid  item xs={6} >
-                      <TextField type="Number"  justify="center"   inputProps={{min: 0, style: { textAlign: 'center' }}}/>
+              <Grid  container justify="center" >
+                    <Grid  item xs={3} >
+                      <TextField type="Number"  justify="center" 
+                       InputProps={{
+                        endAdornment: <InputAdornment position="start">Ether</InputAdornment>,
+                      }}
+                        inputProps={{min: 0, style: { textAlign: 'center' }}}/>
                     </Grid>
-                    <Grid item xs={6} justify="center" align="center" style={{display: 'flex'}}>
+                    <Grid item xs={3} container justify="center" align="center" >
                       <Button variant="contained" color="primary" endIcon={<SendIcon />}>Lend</Button>
                     </Grid>
               </Grid>
             </form>
             <p className={styles.sub_heading}>Agree To Extend the Loan?</p>
-            <Grid container xs={12} justify="center" >
+            <Grid container  justify="center" >
   <Grid item xs={2} className={styles.vote_button_wrapper}><Button variant="contained" color="primary"  startIcon={<CheckCircleIcon />}>Yes</Button> </Grid>
-  <Grid item xs={2} className={styles.vote_button_wrapper}justify="center"><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid>
+  <Grid item xs={2} className={styles.vote_button_wrapper}><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid>
             </Grid>
             </Paper>
         </Grid>
@@ -164,47 +175,69 @@ const showLoan = () => {
         <Grid item xs={3}>
           
           <Paper style={{padding:"1em", margin:"0 2em"}}>
-              <p className={styles.header}>Borrower</p>
-            <Button
-              size="small"
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                Toast.fire({
-                  icon: "success",
-                  title: "Copied to clipboard",
-                });
-                navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
-              }}
-            >
-              Copy address
-            </Button>
+          <div className={styles.document_wrappup}>
+              <span className={styles.header}>Borrower</span>
+              <FileCopyIcon 
+                   className={styles.copy_icon}
+                   onClick={() => {
+                    Toast.fire({
+                      icon: "success",
+                      title: "Copied to clipboard",
+                    });
+                    navigator.clipboard.writeText(loanDetails[0]);
+                  }}
+                />
+            </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}>Mortgage</p>
-              <p className={styles.document_name}> My Building Building Building  <FileCopyIcon className={styles.copy_icon}/></p>
+              <div className={styles.document_wrappup}>
+                <span className={styles.document_name}> My Building Building Building Building Building </span>
+                <FileCopyIcon 
+                   className={styles.copy_icon}
+                   onClick={() => {
+                    Toast.fire({
+                      icon: "success",
+                      title: "Copied to clipboard",
+                    });
+                    navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
+                  }}
+                />
+                <span className={styles.document_price}> 10 ether</span>
 
-              <div className={styles.document}>
-              <Typography>My Building</Typography>
-                <Grid container>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        Toast.fire({
-                          icon: "success",
-                          title: "Copied to clipboard",
-                        });
-                        navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
-                      }}
-                    >
-                      copy address
-                    </Button>
-                    <Typography> 10000</Typography>
-                  </Grid>
-                <p className={styles.document_name}> My Building</p>
               </div>
+              <div className={styles.document_wrappup}>
+                <span className={styles.document_name}> My Building Building Building Building Building </span>
+                <FileCopyIcon 
+                   className={styles.copy_icon}
+                   onClick={() => {
+                    Toast.fire({
+                      icon: "success",
+                      title: "Copied to clipboard",
+                    });
+                    navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
+                  }}
+                />
+                <span className={styles.document_price}> 10 ether</span>
+
+              </div>
+              <div className={styles.document_wrappup}>
+                <span className={styles.document_name}> My Building Building Building Building Building </span>
+                <FileCopyIcon 
+                   className={styles.copy_icon}
+                   color="primary"
+                   onClick={() => {
+                    Toast.fire({
+                      icon: "success",
+                      title: "Copied to clipboard",
+                    });
+                    navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
+                  }}
+                />
+                <span className={styles.document_price}> 10 ether</span>
+
+              </div>
+
             </div>
           </Paper>
         </Grid>
@@ -212,5 +245,14 @@ const showLoan = () => {
     </Layout>
   );
 };
+
+showLoan.getInitialProps = async(props) => {
+  const loanAddress = props.query.loanAddress;
+  const loanContract = Loan(loanAddress);
+  const loanDetails = await loanContract.methods.getLoanSummary().call(); 
+  return {loanAddress
+    , loanDetails
+  };
+}
 
 export default showLoan;
