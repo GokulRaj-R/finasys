@@ -1,20 +1,12 @@
 import React, { Fragment, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core';
 import logoImage from '../../assets/icons/logo.png';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import Newloan from '../../components/newLoan';
+import Newloan from '../../components/NewLoan';
+import Newdocument from '../../components/NewDocument';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,31 +48,11 @@ const useStyles = makeStyles((theme) => ({
     width: 'auto',
     margin: '0 0 0 auto',
   },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-  textField: {
-    color: 'white',
-    width: '24em',
-  },
 }));
 
 const NewLoan = () => {
-  const [Value, setValue] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
   const styles = useStyles();
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-
-  const { register, handleSubmit, control } = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
 
   return (
     <div className={styles.outer}>
@@ -97,7 +69,6 @@ const NewLoan = () => {
         >
           <Tabs
             value={selectedTab}
-            // style={{ width: '60em' }}
             onChange={(e, val) => setSelectedTab(val)}
             indicatorColor="secondary"
             textColor="primary"
@@ -110,11 +81,7 @@ const NewLoan = () => {
           </Tabs>
         </AppBar>
         {selectedTab == 0 && <Newloan />}
-        {selectedTab == 1 && (
-          <Fragment>
-            <h1>New Document</h1>
-          </Fragment>
-        )}
+        {selectedTab == 1 && <Newdocument />}
       </div>
     </div>
   );
