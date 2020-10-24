@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Radio from '@material-ui/core/Radio';
@@ -10,50 +10,14 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core';
 import { useForm, Controller } from 'react-hook-form';
 
+import LoanFactory from '../ethereum/instances/loanFactory';
+import web3 from '../ethereum/web3';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     overflow: 'hidden',
     marginBottom: '1em',
-  },
-  outer: {
-    position: 'relative',
-    textAlign: 'center',
-    backgroundColor: '#2f2f36',
-    height: '100vh',
-    color: 'white',
-    inner: {
-      height: '100%',
-      margin: 'auto',
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    '& h1': {
-      paddingBottom: '10px',
-      color: 'red',
-    },
-  },
-  logo_container: {
-    padding: '3em 0px 5em 0px',
-    height: '100%',
-    '& span': {
-      fontSize: '3em',
-      color: '#640b37',
-      margin: '0 auto 0 0',
-    },
-    display: 'flex',
-    textDecoration: 'none',
-  },
-  logo: {
-    justifyContent: 'center',
-    height: '4em',
-    width: 'auto',
-    margin: '0 0 0 auto',
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
   },
   textField: {
     color: 'white',
@@ -63,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 const newLoan = () => {
   const styles = useStyles();
+  const [loanAddress, setLoanAddress] = useState('');
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -70,8 +35,56 @@ const newLoan = () => {
 
   const { register, handleSubmit, control } = useForm();
 
+  const createLoan = async (
+    title,
+    time,
+    amount,
+    duration,
+    description,
+    documents,
+    type
+  ) => {
+    const loanFactory = LoanFactory();
+
+    try {
+      const accounts = await web3.eth.getAccounts();
+
+      await loanFactory.methods
+        .createLoan(title, description, amount, duration, time, type, documents)
+        .send({ from: accounts[0] });
+
+      const addresses = await loanFactory.methods.getDeployedLoans().call();
+
+      setLoanAddress(addresses.slice(-1)[0]);
+    } catch (err) {
+      console.log('Error!', err);
+    }
+  };
+
   const onSubmit = (data) => {
     console.log(data);
+
+    const {
+      title,
+      time,
+      amount,
+      duration,
+      description,
+      documents,
+      type,
+    } = data;
+    const documentAddresses = documents.split(',');
+    const loanType = type === 'fixed';
+
+    createLoan(
+      title,
+      time,
+      amount,
+      duration,
+      description,
+      documentAddresses,
+      loanType
+    );
   };
   return (
     <Fragment>
@@ -190,7 +203,7 @@ const newLoan = () => {
                   />
                 </RadioGroup>
               }
-              name="Type"
+              name="type"
               control={control}
             />
           </FormControl>
@@ -199,6 +212,9 @@ const newLoan = () => {
           Submit
         </Button>
       </form>
+      {loanAddress.length > 0 && (
+        <p> Address of created loan : {loanAddress} </p>
+      )}
     </Fragment>
   );
 };
