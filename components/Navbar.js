@@ -53,8 +53,8 @@ const useStyles = makeStyles(() => ({
 function Navbar() {
   const styles = useStyles();
   return (
-    <AppBar position="static" color="transparent">
-      <Toolbar>
+    <AppBar position="static" color="transparent" >
+      <Toolbar style={{boxShadow: "0px 5px 2px 0px rgba(0,0,0,0.55)"}}>
         <Link href="/">
           <a className={styles.logo_container}>
             <img className={styles.logo} src={logoImage} />
