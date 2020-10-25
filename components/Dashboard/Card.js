@@ -13,7 +13,7 @@ const useStyles = makeStyles({
   },
 });
 
-const Cardd = ({img, topic, text}) => {
+const Cardd = ({ img, topic, text }) => {
   const classes = useStyles();
 
   return (
@@ -40,6 +40,6 @@ const Cardd = ({img, topic, text}) => {
       </CardActions>
     </Card>
   );
-}
+};
 
 export default Cardd;

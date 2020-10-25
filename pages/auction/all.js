@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Grid, Button } from "@material-ui/core";
-import Layout from "../../components/Layout";
-import CardList from "../../components/CardList";
-import Auction from "../../ethereum/instances/auction";
-import Loan from "../../ethereum/instances/loan";
-import AuctionFactory from "../../ethereum/instances/auctionFactory";
-import { useRouter } from "next/router";
-import auctionBG from "../../assets/images/auctionBG.jpeg";
+import React, { useState, useEffect } from 'react';
+import { TextField, Grid, Button } from '@material-ui/core';
+import Layout from '../../components/Layout';
+import CardList from '../../components/CardList';
+import Auction from '../../ethereum/instances/auction';
+import Loan from '../../ethereum/instances/loan';
+import AuctionFactory from '../../ethereum/instances/auctionFactory';
+import { useRouter } from 'next/router';
+import auctionBG from '../../assets/images/auctionBG.jpeg';
 
 const auctionIndex = () => {
   const router = useRouter();
   const [auctions, setAuctions] = useState([]);
-  const [findAddress, setFindAddress] = useState("");
+  const [findAddress, setFindAddress] = useState('');
 
   const getAuctions = async () => {
     const auctionFactory = AuctionFactory();
@@ -38,7 +38,7 @@ const auctionIndex = () => {
   };
 
   useEffect(() => {
-    document.title = "Auctions - Finasys";
+    document.title = 'Auctions - Finasys';
     getAuctions();
   }, []);
 
@@ -52,30 +52,30 @@ const auctionIndex = () => {
   };
 
   const headStyle = {
-    textAlign: "center",
-    fontFamily: "Georgia",
-    fontWeight: "100",
-    fontSize: "1.75rem",
-    margin: "0",
+    textAlign: 'center',
+    fontFamily: 'Georgia',
+    fontWeight: '100',
+    fontSize: '1.75rem',
+    margin: '0',
   };
 
   const subheadStyle = {
-    textAlign: "center",
-    fontFamily: "Georgia",
-    fontWeight: "100",
-    fontSize: "20px",
+    textAlign: 'center',
+    fontFamily: 'Georgia',
+    fontWeight: '100',
+    fontSize: '20px',
   };
 
   return (
     <Layout>
       <Grid
         style={{
-          paddingBottom: "80px",
-          paddingTop: "100px",
+          paddingBottom: '80px',
+          paddingTop: '100px',
           backgroundImage: `url(${auctionBG})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          marginBottom: "50px",
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          marginBottom: '50px',
         }}
         container
         alignItems="center"
@@ -91,7 +91,7 @@ const auctionIndex = () => {
             Browse through all of them or find a specific one.
           </p>
         </Grid>
-        <Grid style={{ paddingRight: "40px" }} item xs={7} sm={7} md={7}>
+        <Grid style={{ paddingRight: '40px' }} item xs={7} sm={7} md={7}>
           <form onSubmit={handleSubmit} fullwidth="true" autoComplete="off">
             <TextField
               onChange={handleChange}
@@ -100,7 +100,7 @@ const auctionIndex = () => {
               label="Auction Address"
               variant="outlined"
               display="inline"
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
               required
             />
           </form>

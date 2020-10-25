@@ -1,8 +1,9 @@
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logoImage from "../assets/icons/logo.png";
 import Link from "next/link";
+import web3 from "../ethereum/web3";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -12,7 +13,8 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     "& span": {
       fontSize: "2em",
-      color: "#640b37",
+      color: "#308fc9",
+      fontWeight: "600",
     },
     display: "flex",
     alignItems: "center",
@@ -27,8 +29,9 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-evenly",
     flexGrow: 1,
     "& h6": {
-      fontWeight: "400",
+      fontWeight: "600",
       cursor: "pointer",
+      color: "#555555",
       // position:"relative",
       // display: "inline-block",
     },
@@ -52,9 +55,20 @@ const useStyles = makeStyles(() => ({
 
 function Navbar() {
   const styles = useStyles();
+  const [accounts, setAccounts] = useState([]);
+  const getAccounts = async () => {
+    return await web3.eth.getAccounts();
+  };
+
+  useEffect(() => {
+    (async () => {
+      setAccounts(await getAccounts());
+    })();
+  }, []);
+
   return (
-    <AppBar position="static" color="transparent" >
-      <Toolbar style={{boxShadow: "0px 5px 2px 0px rgba(0,0,0,0.55)"}}>
+    <AppBar position="sticky" color="inherit">
+      <Toolbar>
         <Link href="/">
           <a className={styles.logo_container}>
             <img className={styles.logo} src={logoImage} />
@@ -64,6 +78,12 @@ function Navbar() {
         <div className={styles.dropdown}>
           <Link href="/dashboard">
             <Typography variant="h6"> Dashboard</Typography>
+          </Link>
+          <Link
+            disabled={!accounts.length}
+            href={accounts ? `/user/${accounts[0]}` : "/"}
+          >
+            <Typography variant="h6"> Profile </Typography>
           </Link>
           <Link href="/">
             <Typography variant="h6"> Loan </Typography>
