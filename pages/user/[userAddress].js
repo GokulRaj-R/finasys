@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import UserFactory from "../../ethereum/instances/userFactory";
-import Loan from "../../ethereum/instances/Loan";
+import Loan from "../../ethereum/instances/loan";
 import { Grid, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";

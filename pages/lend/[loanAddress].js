@@ -1,15 +1,13 @@
 import { Button, CardActions, Grid, InputAdornment, makeStyles, Paper, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import {StarIcon} from '@material-ui/core/Icon';
 import Swal from "sweetalert2";
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import SendIcon from '@material-ui/icons/Send';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { useRouter } from "next/router";
 import Loan from "../../ethereum/instances/loan";
+import documentFactory from '../../ethereum/instances/documentFactory';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -94,7 +92,7 @@ const useStyles = makeStyles({
       alignItems: "center",
     },
     document_price: {
-      width: "8em",
+      minWidth: "8em",
       textAlign: "right",
       fontSize: "0.8em",
       color: "green",
@@ -103,10 +101,11 @@ const useStyles = makeStyles({
     }
   })
 
-const showLoan = ({loanAddress, loanDetails}) => {
+const showLoan = ({loanAddress, loanDetails, documents}) => {
   // console.log(props.loanAddress, props, props.loanDetails);
   const styles = useStyles();
-  console.log(loanAddress, loanDetails);
+  const d = new Date();
+  console.log(d.getTime());
   return (
     <Layout>
       <Grid container 
@@ -128,17 +127,17 @@ const showLoan = ({loanAddress, loanDetails}) => {
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}>Interest Rate</p>
-              <p className={styles.details}> 100000</p>
+              <p className={styles.details}> 2%</p>
             </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}> Started On</p>
-              <p className={styles.details}> 100000</p>
+              <p className={styles.details}> 5th Nov 2020</p>
             </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}>Duration</p>
-              <p className={styles.details}> 100000</p>
+              <p className={styles.details}> 2 Months</p>
             </div>
           </Paper>
         </Grid>
@@ -148,27 +147,37 @@ const showLoan = ({loanAddress, loanDetails}) => {
           <p className={styles.description}>
             {loanDetails[2]}
           </p>
-          
-            <p className={styles.sub_heading}>Lend Money</p>
-            <form className={styles.form}>
-              <Grid  container justify="center" >
-                    <Grid  item xs={3} >
-                      <TextField type="Number"  justify="center" 
-                       InputProps={{
-                        endAdornment: <InputAdornment position="start">Ether</InputAdornment>,
-                      }}
-                        inputProps={{min: 0, style: { textAlign: 'center' }}}/>
-                    </Grid>
-                    <Grid item xs={3} container justify="center" align="center" >
-                      <Button variant="contained" color="primary" endIcon={<SendIcon />}>Lend</Button>
-                    </Grid>
-              </Grid>
-            </form>
-            <p className={styles.sub_heading}>Agree To Extend the Loan?</p>
-            <Grid container  justify="center" >
-  <Grid item xs={2} className={styles.vote_button_wrapper}><Button variant="contained" color="primary"  startIcon={<CheckCircleIcon />}>Yes</Button> </Grid>
-  <Grid item xs={2} className={styles.vote_button_wrapper}><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid>
-            </Grid>
+          {
+            // startsOn + duration
+            d.getTime()<loanDetails[5]+loanDetails[6] ?
+            (
+              <>
+                <p className={styles.sub_heading}>Lend Money</p>
+                        <form className={styles.form}>
+                          <Grid  container justify="center" >
+                                <Grid  item xs={3} >
+                                  <TextField type="Number"  justify="center" 
+                                  InputProps={{
+                                    endAdornment: <InputAdornment position="start">Ether</InputAdornment>,
+                                  }}
+                                    inputProps={{min: 0, style: { textAlign: 'center' }}}/>
+                                </Grid>
+                                <Grid item xs={3} container justify="center" align="center" >
+                                  <Button variant="contained" color="primary" endIcon={<SendIcon />}>Lend</Button>
+                                </Grid>
+                          </Grid>
+                </form> 
+               </>
+            ) : <>
+                <p className={styles.sub_heading}>Agree To Extend the Loan?</p>
+                <Grid container  justify="center" >
+                  <Grid item xs={2} className={styles.vote_button_wrapper}><Button variant="contained" color="primary"  startIcon={<CheckCircleIcon />}>Yes</Button> </Grid>
+                  <Grid item xs={2} className={styles.vote_button_wrapper}><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid>
+                </Grid>
+            </>
+          }
+            
+           
             </Paper>
         </Grid>
 
@@ -191,8 +200,10 @@ const showLoan = ({loanAddress, loanDetails}) => {
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}>Mortgage</p>
-              <div className={styles.document_wrappup}>
-                <span className={styles.document_name}> My Building Building Building Building Building </span>
+              {
+                documents.map(document=>(
+                  <div className={styles.document_wrappup}>
+                <span className={styles.document_name}> {document.description} </span>
                 <FileCopyIcon 
                    className={styles.copy_icon}
                    onClick={() => {
@@ -200,43 +211,15 @@ const showLoan = ({loanAddress, loanDetails}) => {
                       icon: "success",
                       title: "Copied to clipboard",
                     });
-                    navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
+                    navigator.clipboard.writeText(document.value);
                   }}
                 />
-                <span className={styles.document_price}> 10 ether</span>
+                <span className={styles.document_price}>{`${document.value} ether`}</span>
 
               </div>
-              <div className={styles.document_wrappup}>
-                <span className={styles.document_name}> My Building Building Building Building Building </span>
-                <FileCopyIcon 
-                   className={styles.copy_icon}
-                   onClick={() => {
-                    Toast.fire({
-                      icon: "success",
-                      title: "Copied to clipboard",
-                    });
-                    navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
-                  }}
-                />
-                <span className={styles.document_price}> 10 ether</span>
-
-              </div>
-              <div className={styles.document_wrappup}>
-                <span className={styles.document_name}> My Building Building Building Building Building </span>
-                <FileCopyIcon 
-                   className={styles.copy_icon}
-                   color="primary"
-                   onClick={() => {
-                    Toast.fire({
-                      icon: "success",
-                      title: "Copied to clipboard",
-                    });
-                    navigator.clipboard.writeText('0xABc6421e0cd25a9Ff83692E3CFF36566f38aE1aE');
-                  }}
-                />
-                <span className={styles.document_price}> 10 ether</span>
-
-              </div>
+                ))
+              }
+              
 
             </div>
           </Paper>
@@ -249,9 +232,18 @@ const showLoan = ({loanAddress, loanDetails}) => {
 showLoan.getInitialProps = async(props) => {
   const loanAddress = props.query.loanAddress;
   const loanContract = Loan(loanAddress);
-  const loanDetails = await loanContract.methods.getLoanSummary().call(); 
-  return {loanAddress
-    , loanDetails
+  const loanDetails = await loanContract?.methods?.getLoanSummary()?.call(); 
+  const documentFactoryContract = documentFactory();
+  const documents = await Promise.all(
+    loanDetails[10].map(async(documentAddress)=>{
+      const documentDetails = await documentFactoryContract?.methods?.getDocumentSummary(documentAddress)?.call();
+      return {description: documentDetails[3], value: documentDetails[2]};
+    })
+  )
+  return {
+    loanAddress,
+    loanDetails,
+    documents,
   };
 }
 
