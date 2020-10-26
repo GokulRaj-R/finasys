@@ -23,6 +23,11 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     width: '24em',
   },
+  radio: {
+    '& .MuiTypography-body1': {
+      color: 'black',
+    },
+  },
 }));
 
 const newLoan = () => {
@@ -98,7 +103,7 @@ const newLoan = () => {
               spacing={2}
               style={{ margin: '1px' }}
             >
-              <Grid item name="title">
+              <Grid item>
                 <TextField
                   id="filled-basic"
                   label="Title"
@@ -106,7 +111,7 @@ const newLoan = () => {
                   className={styles.textField}
                   variant="filled"
                   inputRef={register({ required: true })}
-                  color="secondary"
+                  color="primary"
                 />
               </Grid>
               <Grid item>
@@ -118,7 +123,7 @@ const newLoan = () => {
                   variant="filled"
                   inputRef={register({ required: true })}
                   name="time"
-                  color="secondary"
+                  color="primary"
                 />
               </Grid>
             </Grid>
@@ -137,7 +142,7 @@ const newLoan = () => {
                   variant="filled"
                   inputRef={register({ required: true })}
                   name="amount"
-                  color="secondary"
+                  color="primary"
                 />
               </Grid>
               <Grid item>
@@ -149,21 +154,9 @@ const newLoan = () => {
                   variant="filled"
                   inputRef={register({ required: true })}
                   name="duration"
-                  color="secondary"
+                  color="primary"
                 />
               </Grid>
-            </Grid>
-            <Grid item xs>
-              <TextField
-                id="filled-basic"
-                label="Description"
-                type="text"
-                style={{ width: '49em' }}
-                variant="filled"
-                inputRef={register({ required: true })}
-                name="description"
-                color="secondary"
-              />
             </Grid>
             <Grid item xs>
               <TextField
@@ -174,7 +167,22 @@ const newLoan = () => {
                 variant="filled"
                 inputRef={register({ required: true })}
                 name="documents"
-                color="secondary"
+                color="primary"
+              />
+            </Grid>
+            <Grid item xs>
+              <TextField
+                color="primary"
+                id="filled-multiline-static"
+                multiline
+                rows={3}
+                label="Description"
+                type="text"
+                style={{ width: '49em' }}
+                variant="filled"
+                inputRef={register({ required: true })}
+                name="description"
+                color="primary"
               />
             </Grid>
           </Grid>
@@ -192,13 +200,15 @@ const newLoan = () => {
                   onChange={handleChange}
                 >
                   <FormControlLabel
+                    className={styles.radio}
                     value="running"
-                    control={<Radio />}
+                    control={<Radio color="primary" />}
                     label="Running"
                   />
                   <FormControlLabel
+                    className={styles.radio}
                     value="fixed"
-                    control={<Radio />}
+                    control={<Radio color="primary" />}
                     label="Fixed"
                   />
                 </RadioGroup>
@@ -208,7 +218,7 @@ const newLoan = () => {
             />
           </FormControl>
         </section>
-        <Button variant="contained" type="submit" color="secondary">
+        <Button variant="contained" type="submit" color="primary">
           Submit
         </Button>
       </form>

@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '1em',
   },
   textField: {
-    color: 'white',
     width: '24em',
   },
 }));
@@ -61,30 +60,33 @@ const NewDocument = () => {
             <Grid item xs>
               <TextField
                 id="filled-basic"
-                label="Description of the document"
-                type="text"
-                style={{ width: '49em' }}
-                variant="filled"
-                inputRef={register({ required: true })}
-                name="description"
-                color="secondary"
-              />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                id="filled-basic"
                 label="Valuation of the document"
                 type="number"
                 style={{ width: '49em' }}
                 variant="filled"
                 inputRef={register({ required: true })}
                 name="amount"
-                color="secondary"
+                color="primary"
+              />
+            </Grid>
+            <Grid item xs>
+              <TextField
+                color="primary"
+                id="filled-multiline-static"
+                multiline
+                rows={3}
+                label="Description of the document"
+                type="text"
+                style={{ width: '49em' }}
+                variant="filled"
+                inputRef={register({ required: true })}
+                name="description"
+                color="primary"
               />
             </Grid>
           </Grid>
         </div>
-        <Button variant="contained" type="submit" color="secondary">
+        <Button variant="contained" type="submit" color="primary">
           Submit
         </Button>
       </form>
