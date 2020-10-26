@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import logoImage from '../../assets/icons/logo.png';
 import AppBar from '@material-ui/core/AppBar';
@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
   outer: {
     position: 'relative',
     textAlign: 'center',
-    backgroundColor: '#2f2f36',
     height: '100vh',
     color: 'white',
     inner: {
@@ -28,16 +27,17 @@ const useStyles = makeStyles((theme) => ({
     },
     '& h1': {
       paddingBottom: '10px',
-      color: 'red',
+      color: '#757ce8',
     },
   },
   logo_container: {
-    padding: '3em 0px 5em 0px',
+    padding: '3em 0px 2.5em 0px',
     height: '100%',
     '& span': {
       fontSize: '3em',
-      color: '#640b37',
+      color: '#308fc9',
       margin: '0 auto 0 0',
+      fontWeight: '600',
     },
     display: 'flex',
     textDecoration: 'none',
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewLoan = () => {
+const NewLoan = (props) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const styles = useStyles();
 
@@ -70,9 +70,10 @@ const NewLoan = () => {
           <Tabs
             value={selectedTab}
             onChange={(e, val) => setSelectedTab(val)}
-            indicatorColor="secondary"
+            indicatorColor="primary"
             textColor="primary"
             variant="fullWidth"
+            color="primary"
             centered
             aria-label="full width tabs example"
           >
