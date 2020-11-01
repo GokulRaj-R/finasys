@@ -8,6 +8,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Loan from "../../ethereum/instances/loan";
 import documentFactory from '../../ethereum/instances/documentFactory';
+import web3 from "../../ethereum/web3";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -106,6 +107,18 @@ const showLoan = ({loanAddress, loanDetails, documents}) => {
   const styles = useStyles();
   const d = new Date();
   console.log(d.getTime());
+  const [accounts, setAccounts] = useState([]);
+  const getAccounts = async () => {
+    return await web3.eth.getAccounts();
+  };
+
+  useEffect(() => {
+    (async () => {
+      setAccounts(await getAccounts());
+    })();
+  }, []);
+
+  console.log(accounts, accounts[0]===loanDetails[0] , loanDetails[0])
   return (
     <Layout>
       <Grid container 
@@ -148,8 +161,9 @@ const showLoan = ({loanAddress, loanDetails, documents}) => {
             {loanDetails[2]}
           </p>
           {
+            accounts[0]===loanDetails[0] ?
             // startsOn + duration
-            d.getTime()<loanDetails[5]+loanDetails[6] ?
+            d.getTime()>loanDetails[5]+loanDetails[6] ?
             (
               <>
                 <p className={styles.sub_heading}>Lend Money</p>
@@ -166,7 +180,7 @@ const showLoan = ({loanAddress, loanDetails, documents}) => {
                                   <Button variant="contained" color="primary" endIcon={<SendIcon />}>Lend</Button>
                                 </Grid>
                           </Grid>
-                </form> 
+                </form>  
                </>
             ) : <>
                 <p className={styles.sub_heading}>Agree To Extend the Loan?</p>
@@ -175,6 +189,23 @@ const showLoan = ({loanAddress, loanDetails, documents}) => {
                   <Grid item xs={2} className={styles.vote_button_wrapper}><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid>
                 </Grid>
             </>
+            :<>
+            <p className={styles.sub_heading}>Repay</p>
+                    <form className={styles.form}>
+                      <Grid  container justify="center" >
+                            <Grid  item xs={3} >
+                              <TextField type="Number"  justify="center" 
+                              InputProps={{
+                                endAdornment: <InputAdornment position="start">Ether</InputAdornment>,
+                              }}
+                                inputProps={{min: 0, style: { textAlign: 'center' }}}/>
+                            </Grid>
+                            <Grid item xs={3} container justify="center" align="center" >
+                              <Button variant="contained" color="primary" endIcon={<SendIcon />}>Repay</Button>
+                            </Grid>
+                      </Grid>
+            </form>  
+           </>
           }
             
            
