@@ -42,7 +42,7 @@ const Cardd = ({ img, topic, text, linkTo }) => {
           <CardMedia
             component="img"
             height="140"
-            image={`url(${img})`}
+            image={img}
             // src={require(`../../assets/images/${img}`)}
             // image={require(`../../assets/images/showAllLoans.png`)}
             // title=""

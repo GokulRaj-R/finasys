@@ -1,4 +1,4 @@
-import { Button, CardActions, Grid, InputAdornment, makeStyles, Paper, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, withStyles } from "@material-ui/core";
+import { Button, CardActions, Grid, InputAdornment, makeStyles, Paper, TextField } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import {StarIcon} from '@material-ui/core/Icon';
@@ -12,6 +12,8 @@ import { useRouter } from "next/router";
 import Auction from "../../ethereum/instances/auction";
 import Loan from "../../ethereum/instances/loan";
 import documentFactory from '../../ethereum/instances/documentFactory';
+import web3 from "../../ethereum/web3";
+import Router from 'next/router'
 
 const Toast = Swal.mixin({
   toast: true,
@@ -65,6 +67,9 @@ const useStyles = makeStyles({
       fontSize: "1em",
       fontWeight: "600",
       textAlign: "center",
+      margin: "0.25em",
+      display: "flex", 
+      alignItems: "center",
     }, 
     description: {
       textAlign: "justify",
@@ -105,17 +110,62 @@ const useStyles = makeStyles({
     }
   })
 
-const showLoan = ({auctionDetails,loanDetails, documents}) => {
+const showLoan = ({auctionDetails,loanDetails, auctionAddress,documents}) => {
   // console.log(props.loanAddress, props, props.loanDetails);
   const styles = useStyles();
   const d = new Date();
-  console.log(d.getTime());
+  const [accounts, setAccounts] = useState([]);
+  const getAccounts = async () => {
+    return await web3.eth.getAccounts();
+  };
+
+
+  useEffect(() => {
+    (async () => {
+      setAccounts(await getAccounts());
+    })();
+    document.title = 'Auction - Finasys';
+  }, []);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [val, setVal] = useState(0);
+  const handleBid = async () =>{
+    setIsLoading(true);
+    const auctionContract = Auction(auctionAddress);
+    // 0 to fake the condition date<expiryDate
+    await auctionContract.methods.bid(0).send({value: web3.utils.toWei(val, 'ether'), from : accounts[0]});
+    setIsLoading(false);
+
+  Router.reload(window.location.pathname);
+  }
+  const changeValue= e => {
+    const {value} = e.target;
+    setVal(value);
+  }
+  const convertToEther = nwei => {
+    // console.log(nwei, nwei.toString());
+    return web3.utils.fromWei(nwei.toString(), 'ether');
+  }
+  const convertToWei = nether => {
+    return web3.utils.toWei(nether, 'ether');
+  }
+  
+  const castVote = async(vote) => {
+    console.log(vote);
+    setIsLoading(true);
+    
+    const auctionContract = Auction(auctionAddress);
+    await auctionContract.methods.endAuction().send({from : accounts[0]});
+    setIsLoading(false);
+  }
+
+
+
   return (
     <Layout>
       <Grid container 
       style={{padding: "1.5em 0em"}}
       >
-      
 
 <Grid item xs={3}>
           <Paper style={{padding:"1em", margin:"0 2em"}}>
@@ -136,12 +186,12 @@ const showLoan = ({auctionDetails,loanDetails, documents}) => {
             <hr />
             <div className={styles.row}> 
               <p className={styles.header}>Current Bid</p>
-              <p className={styles.details}> {auctionDetails[1]} wei</p>
+              <p className={styles.details}> {convertToEther(auctionDetails[1])} ether</p>
             </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}>Minimum Bid</p>
-              <p className={styles.details}> {auctionDetails[2]}</p>
+              <p className={styles.details}> {convertToEther(auctionDetails[1])} ether</p>
             </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
@@ -166,22 +216,24 @@ const showLoan = ({auctionDetails,loanDetails, documents}) => {
                                 <Grid  item xs={3} >
                                   <TextField type="Number"  justify="center" 
                 
+                                  onChange={changeValue}
                                   InputProps={{
                                     endAdornment: <InputAdornment position="start">Ether</InputAdornment>,
                                   }}
-                                    inputProps={{min: 0, style: { textAlign: 'center' }}}/>
+                                    inputProps={{min: convertToEther(auctionDetails[1]), style: { textAlign: 'center' }}}/>
                                 </Grid>
                                 <Grid item xs={3} container justify="center" align="center" >
-                                  <Button variant="contained" color="primary" endIcon={<SendIcon />}>Bid</Button>
+                                  <Button onClick={handleBid}  disabled={isLoading} variant="contained" color="primary" endIcon={<SendIcon />}>Bid</Button>
                                 </Grid>
                           </Grid>
                 </form> 
                </>
             ) : <>
-                <p className={styles.sub_heading}>Finalize the Loan?</p>
+               
                 <Grid container  justify="center" >
-                  <Grid item xs={2} className={styles.vote_button_wrapper}><Button variant="contained" color="primary"  startIcon={<CheckCircleIcon />}>Yes</Button> </Grid>
-                  <Grid item xs={2} className={styles.vote_button_wrapper}><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid>
+                <p className={styles.sub_heading}>Finalize the Loan?</p>
+                  <Grid item xs={2} onClick={castVote} className={styles.vote_button_wrapper}><Button variant="contained" color="primary"  startIcon={<CheckCircleIcon />}>Yes</Button> </Grid>
+                  {/* <Grid item xs={2} className={styles.vote_button_wrapper}><Button startIcon={<CancelIcon />} variant="contained" color="secondary" >No</Button> </Grid> */}
                 </Grid>
             </>
           }
@@ -252,8 +304,7 @@ showLoan.getInitialProps = async(props) => {
       return {description: documentDetails[3], value: documentDetails[2]};
     })
   )
-
-  return {auctionDetails, loanDetails, documents};
+  return {auctionDetails, loanDetails,auctionAddress, documents};
 
 }
 
