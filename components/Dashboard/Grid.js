@@ -4,12 +4,14 @@ import { makeStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Card from './Card';
 
-import auction from '../../assets/images/auction.jpg';
-import newDoc from '../../assets/images/newDoc.png';
-import newLoan from '../../assets/images/newLoan.png';
-import showAllLoans from '../../assets/images/showAllLoans.png';
-import verify from '../../assets/images/verify.png';
-import profile from '../../assets/images/profile.png';
+import {
+  showAllLoans,
+  newDoc,
+  newLoan,
+  profile,
+  verify,
+  auction,
+} from '../../assets/dashboardImages';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -28,13 +30,13 @@ export default function SpacingGrid() {
           justify="center"
           xs={12}
           spacing={3}
-          style={{ marginBottom: '3px' }}
+          style={{ marginBottom: '8px' }}
         >
           <Grid item xs={4}>
             <Card
               img={showAllLoans}
               topic="Show all loans"
-              text="Display all of your borrowed loans"
+              text="Display all of your active loans"
               linkTo="/lend/all"
             />
           </Grid>
@@ -42,7 +44,7 @@ export default function SpacingGrid() {
             <Card
               img={auction}
               topic="Show all auctions"
-              text="Display all the auctions"
+              text="Display all active auctioned items"
               linkTo="/auction/all"
             />
           </Grid>
@@ -67,7 +69,7 @@ export default function SpacingGrid() {
               img={newLoan}
               topic="Apply for a new loan"
               text="In urgent need of money? Applying for a loan has never been this hassle free!"
-              linkTo="/loan/new"
+              linkTo="/loan/0"
             />
           </Grid>
           <Grid item xs={4}>
@@ -75,7 +77,7 @@ export default function SpacingGrid() {
               img={newDoc}
               text="Submit a new asset"
               topic="Add new document"
-              linkTo="/loan/new"
+              linkTo="/loan/1"
             />
           </Grid>
           <Grid item xs={4}>

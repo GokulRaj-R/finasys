@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import logoImage from '../../assets/icons/logo.png';
 import AppBar from '@material-ui/core/AppBar';
@@ -50,9 +50,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewLoan = (props) => {
-  const [selectedTab, setSelectedTab] = useState(0);
+const NewLoan = ({ tab }) => {
+  const [selectedTab, setSelectedTab] = useState(parseInt(tab));
   const styles = useStyles();
+
+  useEffect(() => {
+    document.title = 'Apply/Submit - Finasys';
+  });
 
   return (
     <div className={styles.outer}>
@@ -86,6 +90,13 @@ const NewLoan = (props) => {
       </div>
     </div>
   );
+};
+
+NewLoan.getInitialProps = (props) => {
+  const tab = props.query.tab;
+  return {
+    tab,
+  };
 };
 
 export default NewLoan;

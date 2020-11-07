@@ -57,18 +57,9 @@ export default function ImgMediaCard({ card }) {
           alt="Details"
           height="140"
           image={`https://picsum.photos/500/600?random=${card.description}`}
-          title="Loan Description"
+          title="Document Description"
         />
         <CardContent>
-          <Typography
-            className={classes.head}
-            gutterBottom
-            variant="h6"
-            component="h2"
-            noWrap
-          >
-            {card.title}
-          </Typography>
           <Typography
             className={classes.subtitleLeft}
             variant="h4"
@@ -93,14 +84,17 @@ export default function ImgMediaCard({ card }) {
           >
             {card.description}
           </Typography>
+          <Typography
+            style={{ paddingTop: '10px', textAlign: 'left' }}
+            className={classes.body}
+            variant="body2"
+            component="p"
+          >
+            Valuation: {card.valuation}
+          </Typography>
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Link href={`/${card.type == -1 ? 'auction' : 'lend'}/${card.address}`}>
-          <Button size="small" color="primary">
-            Learn More
-          </Button>
-        </Link>
         <Button
           size="small"
           onClick={() => {
@@ -113,13 +107,6 @@ export default function ImgMediaCard({ card }) {
         >
           copy address
         </Button>
-        {card.type != -1 ? (
-          <Typography
-            className={classes.type}
-          >{`Type ${card.type}`}</Typography>
-        ) : (
-          <></>
-        )}
       </CardActions>
     </Card>
   );

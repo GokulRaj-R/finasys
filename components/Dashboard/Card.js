@@ -8,22 +8,21 @@ import Typography from '@material-ui/core/Typography';
 import Link from 'next/link';
 import web3 from '../../ethereum/web3';
 
-import auction from '../../assets/images/auction.jpg';
-import newDoc from '../../assets/images/newDoc.png';
-import newLoan from '../../assets/images/newLoan.png';
-import showAllLoans from '../../assets/images/showAllLoans.png';
-import verify from '../../assets/images/verify.png';
-import profile from '../../assets/images/profile.png';
-
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
   },
+  media: {
+    '& .MuiCardMedia-root': {
+      height: '100',
+    },
+  },
 });
 
+// MuiCardMedia-root makeStyles-media-16 MuiCardMedia-media MuiCardMedia-img
 const Cardd = ({ img, topic, text, linkTo }) => {
+  const styles = useStyles();
   const classes = useStyles();
-  const images = [showAllLoans, auction, profile, newLoan, newDoc, verify];
   let accounts = [];
 
   const getAccounts = async () => {
@@ -41,8 +40,9 @@ const Cardd = ({ img, topic, text, linkTo }) => {
         <CardActionArea>
           <CardMedia
             component="img"
-            height="140"
-            image={`url(${img})`}
+            height="300"
+            image={img}
+            className={styles.media}
             // src={require(`../../assets/images/${img}`)}
             // image={require(`../../assets/images/showAllLoans.png`)}
             // title=""
