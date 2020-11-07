@@ -26,11 +26,6 @@
     "truffle": "^5.1.49",
     "truffle-hdwallet-provider": "^1.0.17",
     "web3": "^1.2.11"
-  },
-  "devDependencies": {},
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint-staged"
-    }
   }
+  
 }
