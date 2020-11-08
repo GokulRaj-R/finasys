@@ -43,6 +43,7 @@ const Cardd = ({ img, topic, text, linkTo }) => {
             height="300"
             image={img}
             className={styles.media}
+
             // src={require(`../../assets/images/${img}`)}
             // image={require(`../../assets/images/showAllLoans.png`)}
             // title=""

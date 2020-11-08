@@ -25,6 +25,9 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Loan from '../../ethereum/instances/loan';
 import documentFactory from '../../ethereum/instances/documentFactory';
+import web3 from "../../ethereum/web3";
+import { triggerAlert } from "../../alert/getAlert";
+import Router from 'next/router';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -122,7 +125,56 @@ const showLoan = ({ loanAddress, loanDetails, documents }) => {
   // console.log(props.loanAddress, props, props.loanDetails);
   const styles = useStyles();
   const d = new Date();
-  console.log(d.getTime());
+  // console.log(d.getTime());
+  const [accounts, setAccounts] = useState([]);
+  const getAccounts = async () => {
+    return await web3.eth.getAccounts();
+  };
+
+  useEffect(() => {
+    (async () => {
+      setAccounts(await getAccounts());
+    })();
+    document.title = 'Loan - Finasys';
+  }, []);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [val, setVal] = useState(0);
+  const handleRepay = async () =>{
+    setIsLoading(true);
+    const loanContract = Loan(loanAddress);
+    await loanContract.methods.repay(loanDetails[4]).send({value: web3.utils.toWei(val, 'ether'), from : accounts[0]});
+    setIsLoading(false);
+  }
+  const changeValue= e => {
+    const {value} = e.target;
+    setVal(value);
+  }
+  const convertToEther = nwei => {
+    // console.log(nwei, nwei.toString());
+    return web3.utils.fromWei(nwei.toString(), 'ether');
+  }
+  const convertToWei = nether => {
+    return web3.utils.toWei(nether, 'ether');
+  }
+  const handleInvest = async() => {
+    if(convertToWei(val)>loanDetails[4]){
+      triggerAlert({icon: 'error', title: 'Check Paying Value'});
+      return ;
+    }
+    setIsLoading(true);
+    const loanContract = Loan(loanAddress);
+    await loanContract.methods.addLenders().send({value: web3.utils.toWei(val, 'ether'), from : accounts[0]});
+    setIsLoading(false);
+
+  Router.reload(window.location.pathname);
+  }
+  const castVote = async(vote) => {
+    setIsLoading(true);
+    const loanContract = Loan(loanAddress);
+    await loanContract.methods.addVote(vote, '1000').send({from : accounts[0]});
+    setIsLoading(false);
+  }
   return (
     <Layout>
       <Grid container style={{ padding: '1.5em 0em' }}>

@@ -29,6 +29,8 @@ import { useRouter } from 'next/router';
 import Auction from '../../ethereum/instances/auction';
 import Loan from '../../ethereum/instances/loan';
 import documentFactory from '../../ethereum/instances/documentFactory';
+import web3 from "../../ethereum/web3";
+import Router from 'next/router'
 
 const Toast = Swal.mixin({
   toast: true,
@@ -51,6 +53,7 @@ const copyHelper = (text) => {
 };
 
 const useStyles = makeStyles({
+
   root: {
     margin: '2em',
   },
@@ -126,13 +129,60 @@ const showLoan = ({ auctionDetails, loanDetails, documents }) => {
   // console.log(props.loanAddress, props, props.loanDetails);
   const styles = useStyles();
   const d = new Date();
-  console.log(d.getTime());
+  const [accounts, setAccounts] = useState([]);
+  const getAccounts = async () => {
+    return await web3.eth.getAccounts();
+  };
+
+
+  useEffect(() => {
+    (async () => {
+      setAccounts(await getAccounts());
+    })();
+    document.title = 'Auction - Finasys';
+  }, []);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [val, setVal] = useState(0);
+  const handleBid = async () =>{
+    setIsLoading(true);
+    const auctionContract = Auction(auctionAddress);
+    // 0 to fake the condition date<expiryDate
+    await auctionContract.methods.bid(0).send({value: web3.utils.toWei(val, 'ether'), from : accounts[0]});
+    setIsLoading(false);
+
+  Router.reload(window.location.pathname);
+  }
+  const changeValue= e => {
+    const {value} = e.target;
+    setVal(value);
+  }
+  const convertToEther = nwei => {
+    // console.log(nwei, nwei.toString());
+    return web3.utils.fromWei(nwei.toString(), 'ether');
+  }
+  const convertToWei = nether => {
+    return web3.utils.toWei(nether, 'ether');
+  }
+  
+  const castVote = async(vote) => {
+    console.log(vote);
+    setIsLoading(true);
+    
+    const auctionContract = Auction(auctionAddress);
+    await auctionContract.methods.endAuction().send({from : accounts[0]});
+    setIsLoading(false);
+  }
+
+
+
   return (
     <Layout>
       <Grid container style={{ padding: '1.5em 0em' }}>
         <Grid item xs={3}>
           <Paper style={{ padding: '1em', margin: '0 2em' }}>
             <div className={styles.document_wrappup}>
+
               <span className={styles.header}>Borrower</span>
               <FileCopyIcon
                 className={styles.copy_icon}
@@ -148,12 +198,12 @@ const showLoan = ({ auctionDetails, loanDetails, documents }) => {
             <hr />
             <div className={styles.row}>
               <p className={styles.header}>Current Bid</p>
-              <p className={styles.details}> {auctionDetails[1]} wei</p>
+              <p className={styles.details}> {convertToEther(auctionDetails[1])} ether</p>
             </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}>
               <p className={styles.header}>Minimum Bid</p>
-              <p className={styles.details}> {auctionDetails[2]}</p>
+              <p className={styles.details}> {convertToEther(auctionDetails[1])} ether</p>
             </div>
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}>
