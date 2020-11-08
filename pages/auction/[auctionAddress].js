@@ -17,7 +17,7 @@ import Router from 'next/router'
 
 const Toast = Swal.mixin({
   toast: true,
-  position: "top-end",
+  position: "bottom-end",
   showConfirmButton: false,
   timer: 3000,
   timerProgressBar: true,
@@ -196,7 +196,7 @@ const showLoan = ({auctionDetails,loanDetails, auctionAddress,documents}) => {
             <hr styles={styles.horizontal_line} />
             <div className={styles.row}> 
               <p className={styles.header}> Expires on</p>
-              <p className={styles.details}> 5th Nov 2020</p>
+              <p className={styles.details}> 12th Nov 2020</p>
             </div>
           </Paper>
         </Grid>

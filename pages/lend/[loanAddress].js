@@ -14,7 +14,7 @@ import Router from 'next/router';
 
 const Toast = Swal.mixin({
   toast: true,
-  position: "top-end",
+  position: "bottom-end",
   showConfirmButton: false,
   timer: 3000,
   timerProgressBar: true,
@@ -174,7 +174,7 @@ const showLoan = ({loanAddress, loanDetails, documents}) => {
           <hr styles={styles.horizontal_line} />
           <div className={styles.row}> 
             <p className={styles.header}> Started On</p>
-            <p className={styles.details}> 5th Nov 2020</p>
+            <p className={styles.details}> 07th Nov 2020</p>
           </div>
           <hr styles={styles.horizontal_line} />
           <div className={styles.row}> 
@@ -192,7 +192,7 @@ const showLoan = ({loanAddress, loanDetails, documents}) => {
           {
             accounts[0]!==loanDetails[0] ?
             // startsOn + duration
-            d.getTime()<loanDetails[5]+loanDetails[6] ?
+            d.getTime()>loanDetails[5]+loanDetails[6] ?
             (
               <>
                 <p className={styles.sub_heading}>Lend Money</p>
