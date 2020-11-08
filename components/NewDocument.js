@@ -31,15 +31,15 @@ const NewDocument = () => {
     try {
       const accounts = await web3.eth.getAccounts();
 
-      await documentFactory.methods
+      const address = await documentFactory.methods
         .createDocument(parseInt(amount, 10), description)
         .send({ from: accounts[0] });
 
-      const addresses = await documentFactory.methods
-        .getDeployedDocuments()
-        .call();
+      // const addresses = await documentFactory.methods
+      //   .getDeployedDocuments()
+      //   .call();
 
-      setDocumentAddress(addresses.slice(-1)[0]);
+      // setDocumentAddress(addresses.slice(-1)[0]);
       console.log(address);
     } catch (err) {
       console.log('error!!', err);
